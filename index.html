@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dash-LAT · Dashboard Literacy Assessment</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:        #f6f5f2;
+  --surface:   #ffffff;
+  --surface2:  #f0efe9;
+  --border:    #e2e0d8;
+  --border2:   #c8c6be;
+  --text:      #18180f;
+  --muted:     #72706a;
+  --faint:     #aeaca4;
+  --accent:    #1e3a5f;
+  --accent-bg: #edf2f8;
+  --pos:       #226644;
+  --neg:       #8b2828;
+  --edu:       #1e3a5f;
+  --weather:   #2e6b8a;
+  --world:     #2d6b48;
+  --ecom:      #7a4020;
+  --crit:      #8b2828;
+  --ff-serif:  'DM Serif Display', Georgia, serif;
+  --ff-sans:   'DM Sans', system-ui, sans-serif;
+  --ff-mono:   'DM Mono', monospace;
+  --r:         4px;
+}
+
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--ff-sans);background:var(--bg);
+  color:var(--text);line-height:1.55;
+  -webkit-user-select:none;-moz-user-select:none;user-select:none;
+}
+
+/* ── SCREENS ─────────────────────────────────────────── */
+.screen{display:none;height:100vh;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+
+/* ── TOPBAR ──────────────────────────────────────────── */
+.topbar{
+  flex-shrink:0;
+  background:var(--text);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.6rem 1.75rem;height:46px;
+}
+.topbar-logo{color:#fff;font-family:var(--ff-serif);font-size:1rem;letter-spacing:-.01em;white-space:nowrap;font-weight:400}
+.topbar-logo em{color:var(--faint);font-style:italic;font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:1.5rem;flex-shrink:0}
+.topbar-name{color:#888;font-size:.68rem;font-family:var(--ff-mono)}
+.prog-wrap{display:flex;align-items:center;gap:.55rem}
+.prog-track{width:100px;height:2px;background:#333}
+.prog-fill{height:2px;background:#fff;transition:width .4s}
+.prog-lbl{color:#888;font-size:.65rem;font-family:var(--ff-mono)}
+
+/* ── LANDING ─────────────────────────────────────────── */
+#screen-landing{
+  background:var(--text);color:#fff;
+  height:100vh;overflow-y:auto;
+  align-items:center;justify-content:flex-start;padding:3.5rem 1.25rem;
+}
+.land{max-width:600px;width:100%}
+.land-eye{font-family:var(--ff-mono);font-size:.62rem;letter-spacing:.22em;color:var(--faint);text-transform:uppercase;margin-bottom:1rem}
+.land h1{font-family:var(--ff-serif);font-size:clamp(1.8rem,3.8vw,2.65rem);line-height:1.2;color:#fff;margin-bottom:.85rem}
+.land h1 em{font-style:italic;color:#c5c1b8}
+.land-desc{color:#888;font-size:.85rem;line-height:1.75;margin-bottom:1.75rem}
+.land-desc strong{color:#ccc;font-weight:400}
+
+.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.75rem}
+.dim-card{border:1px solid #252320;padding:.75rem .95rem;background:#1c1b18}
+.dim-card .dc-tag{font-family:var(--ff-mono);font-size:.57rem;letter-spacing:.12em;color:var(--faint);text-transform:uppercase;margin-bottom:.18rem}
+.dim-card .dc-name{font-size:.78rem;font-weight:500;color:#ccc;margin-bottom:.15rem}
+.dim-card .dc-desc{font-size:.68rem;color:#666}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem}
+.field label{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:#555;margin-bottom:.28rem}
+.field input{
+  width:100%;background:#18170f;border:1px solid #2c2a27;
+  color:#fff;padding:.58rem .8rem;font-family:var(--ff-sans);font-size:.83rem;
+  outline:none;transition:border-color .2s;
+}
+.field input:focus{border-color:#555}
+.field input::placeholder{color:#383632}
+
+.btn-start{
+  display:block;width:100%;
+  background:#fff;color:var(--text);border:none;
+  padding:.75rem 1.5rem;font-family:var(--ff-sans);font-size:.83rem;font-weight:500;
+  cursor:pointer;transition:background .15s;letter-spacing:.01em;
+}
+.btn-start:hover{background:#e8e6e2}
+
+.land-stats{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #222;display:flex;gap:2rem}
+.ls-n{font-family:var(--ff-serif);font-size:1.45rem;color:#c5c1b8}
+.ls-l{font-size:.62rem;color:#555;letter-spacing:.03em}
+
+.land-author{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #1e1c19}
+.la-name{font-family:var(--ff-serif);font-size:.95rem;color:#ccc;margin-bottom:.18rem}
+.la-role{font-size:.7rem;color:#777;margin-bottom:.28rem}
+.la-contact{font-size:.65rem;color:#555;font-family:var(--ff-mono)}
+.la-contact a{color:var(--faint);text-decoration:none;border-bottom:1px solid #383430;padding-bottom:1px;transition:color .15s,border-color .15s}
+.la-contact a:hover{color:#ccc;border-color:#777}
+.la-copy{font-size:.58rem;color:#3a3836;font-family:var(--ff-mono);margin-top:.45rem;line-height:1.5}
+
+/* ── ASSESSMENT — FIXED HEIGHT, NO EXPANSION ─────────── */
+#screen-assessment{height:100vh;overflow:hidden;flex-direction:column}
+
+.assess-body{
+  display:flex;
+  height:calc(100vh - 46px - 44px);
+  min-height:0;
+  overflow:hidden;
+  flex:1;
+}
+
+.dash-panel{
+  flex:1.6;
+  min-width:0;
+  min-height:0;
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  border-right:1px solid var(--border);
+  padding:1.25rem 1.5rem;
+  background:var(--bg);
+}
+.q-panel{
+  flex:1;
+  min-width:0;
+  min-height:0;
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:var(--surface2);
+  padding:1.25rem 1.3rem;
+}
+
+/* ── TABS ─────────────────────────────────────────────── */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.1rem;flex-shrink:0;gap:.1rem}
+.tab{
+  padding:.38rem .85rem;font-size:.68rem;font-family:var(--ff-sans);font-weight:400;
+  cursor:pointer;border:none;background:transparent;color:var(--muted);
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;
+  border-radius:var(--r) var(--r) 0 0;
+}
+.tab:hover{color:var(--text);background:var(--surface2)}
+.tab.on{color:var(--accent);font-weight:600;border-bottom-color:var(--accent);background:transparent}
+
+/* ── DASH HEADER ──────────────────────────────────────── */
+.dash-hdr{margin-bottom:.9rem}
+.dash-hdr h2{
+  font-family:var(--ff-serif);font-size:1.1rem;font-weight:400;
+  margin-bottom:.12rem;line-height:1.3;color:var(--text);
+}
+.dash-hdr .src{font-family:var(--ff-mono);font-size:.56rem;color:var(--faint);letter-spacing:.02em}
+
+/* ── KPI ROW ──────────────────────────────────────────── */
+.kpi-row{display:grid;gap:.5rem;margin-bottom:.9rem}
+.kpi-row.n3{grid-template-columns:repeat(3,1fr)}
+.kpi-row.n4{grid-template-columns:repeat(4,1fr)}
+.kpi{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  border-left:3px solid var(--border2);
+  padding:.6rem .8rem;
+}
+.kpi.edu{border-left-color:var(--edu)}
+.kpi.weather{border-left-color:var(--weather)}
+.kpi.world{border-left-color:var(--world)}
+.kpi.ecom{border-left-color:var(--ecom)}
+.kpi.crit{border-left-color:var(--crit)}
+.kpi-lbl{
+  font-family:var(--ff-sans);font-size:.58rem;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:.22rem;
+}
+.kpi-val{
+  font-family:var(--ff-serif);font-size:1.3rem;line-height:1.1;
+  color:var(--text);margin-bottom:.12rem;letter-spacing:-.01em;
+}
+.kpi-delta{font-size:.6rem;font-family:var(--ff-mono);color:var(--muted)}
+.kpi-delta.pos{color:var(--pos)}
+.kpi-delta.neg{color:var(--neg)}
+
+/* ── CHART CARDS ──────────────────────────────────────── */
+.cc{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:.75rem .9rem .8rem;
+  min-width:0;overflow:hidden;
+}
+.cc-title{
+  font-family:var(--ff-sans);
+  font-size:.62rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.65rem;flex-shrink:0;
+}
+/* Chart wrapper — fixed height block, canvas fills it */
+.ch{display:block;width:100%;overflow:hidden}
+.ch canvas{display:block!important;width:100%!important;height:100%!important}
+.ch-sm{height:110px}
+.ch-md{height:155px}
+.ch-lg{height:195px}
+.ch-xl{height:230px}
+
+/* Grids — all have fixed bottom margin */
+.g1{display:grid;grid-template-columns:1fr;gap:.5rem;margin-bottom:.5rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem}
+.g-wide{display:grid;grid-template-columns:1.4fr 1fr;gap:.5rem;margin-bottom:.5rem}
+.g1>*,.g2>*,.g3>*,.g-wide>*{min-width:0;overflow:hidden}
+
+/* ── FILTERS ──────────────────────────────────────────── */
+.filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+.fl{font-size:.58rem;font-weight:600;color:var(--faint);letter-spacing:.05em;text-transform:uppercase;font-family:var(--ff-sans)}
+.chip{
+  display:inline-flex;align-items:center;
+  padding:.16rem .6rem;border-radius:20px;font-size:.63rem;font-family:var(--ff-sans);font-weight:500;
+  border:1px solid var(--border);cursor:pointer;user-select:none;
+  background:var(--surface);color:var(--muted);transition:all .12s;letter-spacing:.01em;
+}
+.chip:hover{border-color:var(--border2);color:var(--text)}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ── HEATMAP ──────────────────────────────────────────── */
+.hm-wrap{overflow-x:auto;margin-top:.15rem}
+.hm-tbl{border-collapse:collapse;width:100%}
+.hm-tbl th{padding:.12rem .18rem;text-align:center;font-family:var(--ff-mono);font-weight:400;color:var(--faint);font-size:.5rem;letter-spacing:.02em}
+.hm-tbl td{padding:.12rem .1rem;text-align:center;font-family:var(--ff-mono);font-size:.52rem;border-radius:2px}
+.hm-city{text-align:left!important;font-family:var(--ff-sans)!important;font-size:.6rem!important;padding-right:.4rem!important;font-weight:500;white-space:nowrap;color:var(--text)!important;background:transparent!important}
+
+/* ── DATA NOTE ────────────────────────────────────────── */
+.note{font-size:.56rem;color:var(--faint);font-family:var(--ff-mono);margin-top:.5rem;padding:.35rem .5rem;border-top:1px solid var(--border);background:var(--surface2);border-radius:0 0 var(--r) var(--r)}
+
+.dash-content{display:none}
+.dash-content.on{display:block;min-width:0;overflow:hidden}
+
+/* ── QUESTION PANEL ───────────────────────────────────── */
+.qp-hdr{margin-bottom:.9rem}
+.qp-title{font-family:var(--ff-serif);font-size:.95rem;font-weight:400;margin-bottom:.15rem}
+.qp-sub{font-size:.67rem;color:var(--muted)}
+
+.q-item{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  margin-bottom:.5rem;
+  overflow:hidden;
+}
+.q-hdr{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .75rem .42rem;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.q-num{
+  font-family:var(--ff-sans);font-size:.6rem;font-weight:700;
+  background:var(--accent);color:#fff;
+  padding:.1rem .38rem;border-radius:3px;flex-shrink:0;letter-spacing:.02em;
+}
+.q-meta{font-size:.58rem;color:var(--faint);font-family:var(--ff-sans);font-weight:400}
+.q-ref{font-size:.56rem;color:var(--border2);font-family:var(--ff-mono);margin-left:auto;font-style:italic}
+
+.q-stem{padding:.58rem .75rem;font-size:.77rem;line-height:1.58;color:var(--text)}
+.q-stem strong{font-weight:600}
+.q-stem em{font-style:italic;color:var(--muted)}
+
+.q-opts{padding:0 .75rem .6rem;display:flex;flex-direction:column;gap:.28rem}
+.q-opt{
+  display:flex;align-items:flex-start;gap:.45rem;
+  padding:.42rem .58rem;
+  border:1px solid var(--border);
+  border-radius:3px;
+  cursor:pointer;
+  font-size:.74rem;line-height:1.4;
+  transition:background .1s,border-color .1s;
+  background:var(--surface);
+}
+.q-opt:hover{background:var(--surface2);border-color:var(--border2)}
+.q-opt.on{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.q-opt input{display:none}
+.q-lt{
+  font-family:var(--ff-mono);font-size:.58rem;font-weight:500;
+  color:var(--border2);flex-shrink:0;margin-top:.12rem;min-width:12px;
+}
+.q-opt.on .q-lt{color:var(--accent)}
+
+/* ── SUBMIT BAR ───────────────────────────────────────── */
+.submit-bar{
+  flex-shrink:0;height:44px;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:0 1.75rem;display:flex;align-items:center;justify-content:space-between;
+}
+.sub-info{font-size:.73rem;color:var(--muted)}
+.sub-info strong{color:var(--text)}
+.btn-sub{
+  background:var(--text);color:#fff;border:none;
+  padding:.5rem 1.5rem;font-family:var(--ff-sans);font-size:.75rem;font-weight:500;
+  cursor:pointer;transition:opacity .15s;letter-spacing:.01em;
+}
+.btn-sub:hover:not(:disabled){opacity:.82}
+.btn-sub:disabled{background:var(--border2);color:var(--faint);cursor:not-allowed}
+
+/* ── RESULTS ──────────────────────────────────────────── */
+#screen-results{height:100vh;overflow:hidden}
+.res-scroll{height:calc(100vh - 46px);overflow-y:auto;overflow-x:hidden}
+.res-body{max-width:840px;margin:0 auto;padding:2rem 1.5rem}
+
+.res-hero{display:grid;grid-template-columns:240px 1fr;gap:1.5rem;margin-bottom:1.5rem;align-items:start}
+.res-score{background:var(--text);color:#fff;padding:1.5rem 1.25rem;text-align:center}
+.rs-eye{font-family:var(--ff-mono);font-size:.58rem;letter-spacing:.15em;color:#666;text-transform:uppercase;margin-bottom:.55rem}
+.rs-num{font-family:var(--ff-serif);font-size:3.8rem;line-height:1;color:#fff}
+.rs-of{font-size:.7rem;color:#555;margin-top:.15rem}
+.rs-pct{font-family:var(--ff-serif);font-size:1.5rem;color:#c5c1b8;margin-top:.3rem}
+.rs-pill{display:inline-block;margin-top:.55rem;border:1px solid #333;color:#888;font-family:var(--ff-mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .65rem}
+.res-info h2{font-family:var(--ff-serif);font-size:1.4rem;font-weight:400;margin-bottom:.55rem}
+.res-info p{font-size:.78rem;color:#555;line-height:1.7;margin-bottom:.55rem}
+
+.sec{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:.32rem;margin-bottom:.85rem}
+
+.dim-grid-r{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem;margin-bottom:1.4rem}
+.dim-r{background:var(--surface);border:1px solid var(--border);padding:.75rem .9rem}
+.dr-lbl{font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.22rem}
+.dr-sc{font-family:var(--ff-serif);font-size:1.3rem;margin-bottom:.25rem}
+.dr-track{height:2px;background:var(--border);margin-bottom:.22rem}
+.dr-fill{height:2px;background:var(--text)}
+.dr-pct{font-size:.62rem;font-family:var(--ff-mono);color:var(--muted)}
+
+.dash-bars{margin-bottom:1.4rem}
+.dbar{margin-bottom:.5rem}
+.dbar-meta{display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:.2rem}
+.dbar-meta span:last-child{font-family:var(--ff-mono);color:var(--muted);font-size:.62rem}
+.dbar-track{height:4px;background:var(--border)}
+.dbar-fill{height:4px;background:var(--text);transition:width .6s ease}
+
+.item-list{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.5rem}
+.i-row{
+  display:flex;align-items:flex-start;gap:.5rem;
+  padding:.55rem .8rem;background:var(--surface);border:1px solid var(--border);
+  border-left:2px solid var(--border);
+}
+.i-row.ok{border-left-color:var(--pos)}
+.i-row.no{border-left-color:var(--neg)}
+.i-icon{font-size:.78rem;flex-shrink:0;margin-top:.08rem;font-family:var(--ff-mono)}
+.i-q{font-weight:500;margin-bottom:.12rem;line-height:1.4;font-size:.74rem}
+.i-d{font-size:.64rem;color:var(--muted);font-family:var(--ff-mono)}
+.i-fb{font-size:.68rem;color:#555;margin-top:.18rem;line-height:1.5}
+
+.res-actions{display:flex;gap:.6rem;padding-bottom:2rem}
+.btn-exp{background:var(--text);color:#fff;border:none;padding:.55rem 1.3rem;font-family:var(--ff-sans);font-size:.75rem;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-exp:hover{opacity:.82}
+.btn-rst{background:var(--surface);color:var(--text);border:1px solid var(--border2);padding:.55rem 1.3rem;font-family:var(--ff-sans);font-size:.75rem;font-weight:500;cursor:pointer;transition:background .15s}
+.btn-rst:hover{background:var(--surface2)}
+
+@media(max-width:860px){
+  html,body{height:auto;overflow:auto}
+  .screen{height:auto;overflow:visible}
+  .screen.active{height:auto}
+  #screen-assessment{height:auto}
+  .assess-body{flex-direction:column;height:auto}
+  .dash-panel,.q-panel{height:auto;max-height:none;overflow:visible;border-right:none}
+  .dash-panel{border-bottom:1px solid var(--border)}
+  .kpi-row.n4{grid-template-columns:repeat(2,1fr)}
+  .g2,.g3,.g-wide{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .res-hero{grid-template-columns:1fr}
+  .dim-grid-r{grid-template-columns:repeat(2,1fr)}
+  .res-scroll{height:auto;overflow:visible}
+}
+
+/* ── SHORT ANSWER ─────────────────────────────────────── */
+.q-sa-wrap{padding:0 .8rem .65rem}
+.q-sa-wrap textarea{
+  width:100%;min-height:80px;
+  border:1px solid var(--border);
+  font-family:var(--ff-sans);font-size:.76rem;line-height:1.6;
+  padding:.5rem .7rem;resize:vertical;outline:none;
+  background:var(--surface2);color:var(--text);
+  transition:border-color .2s;
+}
+.q-sa-wrap textarea:focus{border-color:var(--accent);background:var(--surface)}
+.sa-footer{display:flex;justify-content:space-between;align-items:center;margin-top:.3rem}
+.sa-hint{font-size:.58rem;color:var(--faint);font-family:var(--ff-mono)}
+.sa-count{font-size:.58rem;color:var(--faint);font-family:var(--ff-mono)}
+
+/* ── SURVEY SCREEN ───────────────────────────────────── */
+#screen-survey{height:100vh;overflow:hidden;flex-direction:column}
+.sv-scroll{flex:1;overflow-y:auto;overflow-x:hidden}
+.sv-body{max-width:680px;margin:0 auto;padding:1.75rem 1.5rem 3rem}
+
+.sv-intro{margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.sv-intro .sv-eye{font-family:var(--ff-mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:.5rem}
+.sv-intro h2{font-family:var(--ff-serif);font-size:1.35rem;font-weight:400;margin-bottom:.5rem}
+.sv-intro p{font-size:.82rem;color:var(--muted);line-height:1.65}
+
+.sv-section{margin-bottom:1.5rem}
+.sv-section-label{font-family:var(--ff-sans);font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem;padding-bottom:.35rem;border-bottom:2px solid var(--accent)}
+
+.sv-q{margin-bottom:1.1rem}
+.sv-q-text{font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:.55rem;line-height:1.5}
+.sv-q-text em{font-style:italic;font-weight:400;color:var(--muted)}
+
+.sv-select{
+  font-family:var(--ff-sans);font-size:.8rem;padding:.48rem .7rem;
+  border:1px solid var(--border);border-radius:var(--r);
+  background:var(--surface);color:var(--text);outline:none;
+  min-width:180px;cursor:pointer;
+  transition:border-color .15s;
+}
+.sv-select:focus{border-color:var(--accent)}
+
+.sv-radio-group{display:flex;flex-direction:column;gap:.38rem}
+.sv-radio-row{flex-direction:row;flex-wrap:wrap;gap:.4rem .75rem}
+.sv-radio{display:flex;align-items:center;gap:.45rem;cursor:pointer;font-size:.78rem;color:var(--text)}
+.sv-radio input[type=radio]{
+  width:14px;height:14px;accent-color:var(--accent);flex-shrink:0;cursor:pointer;
+}
+.sv-radio-text{flex-wrap:wrap;gap:.3rem}
+.sv-inline-text{
+  font-family:var(--ff-sans);font-size:.75rem;padding:.25rem .5rem;
+  border:1px solid var(--border);border-radius:var(--r);
+  background:var(--surface);color:var(--text);outline:none;width:160px;
+  transition:border-color .15s;
+}
+.sv-inline-text:focus{border-color:var(--accent)}
+
+.sv-check-group{display:flex;flex-direction:column;gap:.35rem}
+.sv-check{display:flex;align-items:center;gap:.45rem;cursor:pointer;font-size:.78rem;color:var(--text)}
+.sv-check input[type=checkbox]{width:14px;height:14px;accent-color:var(--accent);flex-shrink:0;cursor:pointer}
+
+.sv-scale{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.sv-scale-lbl{font-size:.68rem;color:var(--muted);font-family:var(--ff-mono);white-space:nowrap}
+.sv-scale-btns{display:flex;gap:.3rem}
+.sv-sc-btn{
+  width:34px;height:34px;border:1px solid var(--border);border-radius:var(--r);
+  background:var(--surface);color:var(--muted);
+  font-family:var(--ff-sans);font-size:.8rem;font-weight:500;
+  cursor:pointer;transition:all .12s;
+}
+.sv-sc-btn:hover{border-color:var(--border2);color:var(--text)}
+.sv-sc-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.sv-btn-next{
+  display:block;width:100%;
+  background:var(--accent);color:#fff;border:none;border-radius:var(--r);
+  padding:.75rem 1.5rem;font-family:var(--ff-sans);font-size:.83rem;font-weight:500;
+  cursor:pointer;transition:opacity .15s;margin-top:1.5rem;letter-spacing:.01em;
+}
+.sv-btn-next:hover{opacity:.88}
+.sv-btn-next:disabled{background:var(--border2);color:var(--faint);cursor:not-allowed}
+.sv-progress-note{text-align:center;font-size:.65rem;color:var(--faint);font-family:var(--ff-mono);margin-top:.6rem}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════ LANDING ════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="land">
+    <div class="land-eye">Dash-LAT · Dashboard Literacy Assessment</div>
+    <h1>How well do you <em>read</em> a dashboard?</h1>
+    <p class="land-desc">
+      This assessment measures your ability to <strong>extract values</strong>, <strong>recognise patterns</strong>,
+      <strong>integrate across charts</strong>, and <strong>critically evaluate</strong> data narratives.
+      Four real-world dashboards · 24 questions · approximately 25 minutes.
+    </p>
+    <div class="dim-grid">
+      <div class="dim-card"><div class="dc-tag">Value Extraction</div><div class="dc-name">Read a specific data point</div><div class="dc-desc">Locating exact figures from charts and KPI cards</div></div>
+      <div class="dim-card"><div class="dc-tag">Pattern Recognition</div><div class="dc-name">Identify trends &amp; outliers</div><div class="dc-desc">Spotting anomalies and directional signals across time</div></div>
+      <div class="dim-card"><div class="dc-tag">Cross-Chart Integration</div><div class="dc-name">Synthesise across visuals</div><div class="dc-desc">Connecting insights from two or more charts together</div></div>
+      
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Full Name</label><input type="text" id="inp-name" placeholder="Jane Doe" autocomplete="name"></div>
+      <div class="field"><label>Email</label><input type="email" id="inp-email" placeholder="jane@university.edu"></div>
+    </div>
+    <button class="btn-start" data-action="start">Begin Assessment →</button>
+    <div class="land-stats">
+      <div class="ls-item"><div class="ls-n">4</div><div class="ls-l">Dashboards</div></div>
+      <div class="ls-item"><div class="ls-n">24</div><div class="ls-l">Questions</div></div>
+      <div class="ls-item"><div class="ls-n">3</div><div class="ls-l">Competencies</div></div>
+      <div class="ls-item"><div class="ls-n">~25</div><div class="ls-l">Minutes</div></div>
+    </div>
+
+    <div class="land-author">
+      <div class="la-name">Vinayaka Gude, Ph.D.</div>
+      <div class="la-role">Assistant Professor, Business Analytics · Elon University</div>
+      <div class="la-contact">Questions? <a href="mailto:vgude@elon.edu">vgude@elon.edu</a></div>
+      <div class="la-copy">© 2025 Vinayaka Gude. All rights reserved. Unauthorised reproduction or distribution is prohibited.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════ SURVEY ════════════════════ -->
+<div id="screen-survey" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">Dash-LAT <em>· Background Survey</em></div>
+    <div class="topbar-right"><div class="topbar-name" id="sv-name-bar"></div></div>
+  </div>
+  <div class="sv-scroll">
+    <div class="sv-body">
+      <div class="sv-intro">
+        <div class="sv-eye">Step 2 of 3 — Before the assessment</div>
+        <h2>A few background questions</h2>
+        <p>12 quick questions about your background and experience with data. No right or wrong answers — this helps us understand how prior experience relates to dashboard literacy. Takes about 2 minutes.</p>
+      </div>
+
+      <div class="sv-section">
+        <div class="sv-section-label">Demographics</div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">1. What is your age group?</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-age" value="Under 21"><span>Under 21</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-age" value="21–25"><span>21–25</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-age" value="26–35"><span>26–35</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-age" value="36+"><span>36+</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">2. How do you describe your gender?</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-gender" value="Man"><span>Man</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-gender" value="Woman"><span>Woman</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-gender" value="Non-binary"><span>Non-binary</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-gender" value="Prefer not to say"><span>Prefer not to say</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">3. Year in school</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-year" value="Freshman"><span>Freshman</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-year" value="Sophomore"><span>Sophomore</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-year" value="Junior"><span>Junior</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-year" value="Senior"><span>Senior</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-year" value="Graduate"><span>Graduate</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">4. Academic major or primary field</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-major" value="STEM"><span>STEM</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-major" value="Social Sciences"><span>Social Sciences</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-major" value="Business"><span>Business</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-major" value="Humanities/Arts"><span>Humanities / Arts</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-major" value="Health Sciences"><span>Health Sciences</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-major" value="Undeclared/Other"><span>Undeclared / Other</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">5. Is English your first language?</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-english" value="Yes"><span>Yes</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-english" value="No"><span>No</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="sv-section">
+        <div class="sv-section-label">Prior Experience</div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">6. Which courses have you completed? <em>Check all that apply.</em></div>
+          <div class="sv-check-group">
+            <label class="sv-check"><input type="checkbox" name="sv-courses" value="Intro Statistics"><span>Introductory Statistics</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-courses" value="Research Methods"><span>Research Methods</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-courses" value="Data Science/Analytics"><span>Data Science or Analytics</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-courses" value="Data Visualization"><span>Data Visualization</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-courses" value="Calculus"><span>Calculus</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-courses" value="CS/Programming"><span>Computer Science / Programming</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-courses" value="None"><span>None of these</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">7. How confident are you in your understanding of <strong>descriptive statistics</strong> (mean, median, standard deviation, distributions)? <em>(1 = Not at all, 5 = Very confident)</em></div>
+          <div class="sv-scale">
+            <span class="sv-scale-lbl">Not at all</span>
+            <div class="sv-scale-btns" id="statconf-btns">
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="statconf" data-val="1">1</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="statconf" data-val="2">2</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="statconf" data-val="3">3</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="statconf" data-val="4">4</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="statconf" data-val="5">5</button>
+            </div>
+            <span class="sv-scale-lbl">Very confident</span>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">8. How many years have you used <strong>Excel or Google Sheets</strong> for data work?</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-excel-yrs" value="None"><span>None</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-excel-yrs" value="Less than 1 year"><span>&lt; 1 year</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-excel-yrs" value="1–2 years"><span>1–2 years</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-excel-yrs" value="3–5 years"><span>3–5 years</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-excel-yrs" value="5+ years"><span>5+ years</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">9. How many years have you been <strong>creating data visualizations</strong> (charts, graphs, dashboards)?</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-viz-yrs" value="None"><span>None</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-viz-yrs" value="Less than 1 year"><span>&lt; 1 year</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-viz-yrs" value="1–2 years"><span>1–2 years</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-viz-yrs" value="3–5 years"><span>3–5 years</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-viz-yrs" value="5+ years"><span>5+ years</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">10. Which tools have you used to create charts or analyze data? <em>Check all that apply.</em></div>
+          <div class="sv-check-group">
+            <label class="sv-check"><input type="checkbox" name="sv-tools" value="Excel/Sheets"><span>Excel / Google Sheets</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-tools" value="Tableau/PowerBI"><span>Tableau / Power BI</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-tools" value="R/RStudio"><span>R / RStudio</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-tools" value="Python"><span>Python</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-tools" value="SPSS/SAS"><span>SPSS / SAS</span></label>
+            <label class="sv-check"><input type="checkbox" name="sv-tools" value="None"><span>None of these</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">11. How often do you encounter data dashboards or interactive data displays?</div>
+          <div class="sv-radio-group sv-radio-row">
+            <label class="sv-radio"><input type="radio" name="sv-exposure" value="Never"><span>Never</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-exposure" value="Few times/year"><span>A few times a year</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-exposure" value="Monthly"><span>Monthly</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-exposure" value="Weekly"><span>Weekly</span></label>
+            <label class="sv-radio"><input type="radio" name="sv-exposure" value="Daily"><span>Daily</span></label>
+          </div>
+        </div>
+
+        <div class="sv-q">
+          <div class="sv-q-text">12. How confident are you in your ability to <strong>read and interpret charts and visualizations</strong>? <em>(1 = Not at all, 5 = Very confident)</em></div>
+          <div class="sv-scale">
+            <span class="sv-scale-lbl">Not at all</span>
+            <div class="sv-scale-btns" id="vizconf-btns">
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="vizconf" data-val="1">1</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="vizconf" data-val="2">2</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="vizconf" data-val="3">3</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="vizconf" data-val="4">4</button>
+              <button class="sv-sc-btn" type="button" data-action="setSNS" data-key="vizconf" data-val="5">5</button>
+            </div>
+            <span class="sv-scale-lbl">Very confident</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="sv-btn-next" id="sv-next-btn" data-action="startAssessment">Continue to Assessment →</button>
+      <div class="sv-progress-note">All questions are optional — unanswered items will be recorded as blank.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ ASSESSMENT ════════════════ -->
+<div id="screen-assessment" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">Dash-LAT <em>· Dashboard Literacy Assessment</em></div>
+    <div class="topbar-right">
+      <div class="topbar-name" id="tb-name"></div>
+      <div class="prog-wrap">
+        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="prog-lbl" id="prog-lbl">0 / 24</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="assess-body">
+    <div class="dash-panel">
+      <div class="tabs">
+        <button class="tab on" data-action="switchDash" data-n="1">Enrollment</button>
+        <button class="tab" data-action="switchDash" data-n="2">Weather</button>
+        <button class="tab" data-action="switchDash" data-n="3">Development</button>
+        <button class="tab" data-action="switchDash" data-n="4">E-Commerce</button>
+      </div>
+
+      <!-- ── DASH 1 ── -->
+      <div class="dash-content on" id="dash-1">
+        <div class="dash-hdr">
+          <h2>University Enrollment Tracker</h2>
+          <div class="src">IPEDS · 8 institutions · 2016–2024</div>
+        </div>
+        <div class="kpi-row n4">
+          <div class="kpi edu"><div class="kpi-lbl">Total Enrollment 2024</div><div class="kpi-val">48,200</div><div class="kpi-delta pos">↑ 3.4% year-on-year</div></div>
+          <div class="kpi edu"><div class="kpi-lbl">Avg Retention Rate</div><div class="kpi-val">77.3%</div><div class="kpi-delta pos">↑ 2.1 pts</div></div>
+          <div class="kpi edu"><div class="kpi-lbl">Avg 6-yr Grad Rate</div><div class="kpi-val">58.5%</div><div class="kpi-delta" style="color:var(--muted)">→ +0.3 pts</div></div>
+          <div class="kpi edu"><div class="kpi-lbl">Avg Net Price</div><div class="kpi-val">$17,950</div><div class="kpi-delta neg">↑ $640 vs 2023</div></div>
+        </div>
+        <!-- Full-width enrollment trend -->
+        <div class="g1">
+          <div class="cc"><div class="cc-title">Enrollment trend by institution, 2016–2024</div><div class="ch ch-lg"><canvas id="c-el"></canvas></div></div>
+        </div>
+        <!-- 3 charts: scatter full-width + 2×2 bottom -->
+        <div class="g1">
+          <div class="cc"><div class="cc-title">Net price vs graduation rate — by institution</div><div class="ch ch-lg"><canvas id="c-scat"></canvas></div></div>
+        </div>
+        <div class="g2">
+          <div class="cc"><div class="cc-title">Pell Grant recipients vs graduation rate — by institution</div><div class="ch ch-lg"><canvas id="c-pell"></canvas></div></div>
+          <div class="cc"><div class="cc-title">Retention rate vs student-to-faculty ratio</div><div class="ch ch-lg"><canvas id="c-stf"></canvas></div></div>
+        </div>
+        <div class="note">Data modelled on IPEDS public dataset patterns. Institution names are anonymised composites.</div>
+      </div>
+
+      <!-- ── DASH 2 ── -->
+      <div class="dash-content" id="dash-2">
+        <div class="dash-hdr">
+          <h2>US City Weather Patterns</h2>
+          <div class="src">NOAA Climate Data Online · 6 cities · 1991–2020 normals</div>
+        </div>
+        <div class="filters">
+          <span class="fl">Cities</span>
+          <span class="chip on" data-city="Miami" data-action="toggleCity">Miami</span>
+          <span class="chip on" data-city="Seattle" data-action="toggleCity">Seattle</span>
+          <span class="chip on" data-city="Chicago" data-action="toggleCity">Chicago</span>
+          <span class="chip on" data-city="Phoenix" data-action="toggleCity">Phoenix</span>
+          <span class="chip on" data-city="New York" data-action="toggleCity">New York</span>
+          <span class="chip on" data-city="Denver" data-action="toggleCity">Denver</span>
+        </div>
+        <div class="kpi-row n3">
+          <div class="kpi weather"><div class="kpi-lbl">Highest Monthly Temp</div><div class="kpi-val">106°F</div><div class="kpi-delta" style="color:var(--muted)">Phoenix, July</div></div>
+          <div class="kpi weather"><div class="kpi-lbl">Most Annual Rainfall</div><div class="kpi-val">52.4″</div><div class="kpi-delta" style="color:var(--muted)">Miami</div></div>
+          <div class="kpi weather"><div class="kpi-lbl">Largest Temp Range</div><div class="kpi-val">51°F</div><div class="kpi-delta" style="color:var(--muted)">Chicago (Jan–Jul)</div></div>
+        </div>
+        <!-- Full-width temperature line -->
+        <div class="g1">
+          <div class="cc"><div class="cc-title">Average monthly temperature by city (°F)</div><div class="ch ch-lg"><canvas id="c-temp"></canvas></div></div>
+        </div>
+        <!-- 2×2: heatmap / precipitation / humidity / sunshine -->
+        <div class="g2">
+          <div class="cc" style="justify-content:flex-start"><div class="cc-title">Temperature heatmap — city × month (°F)</div><div class="hm-wrap" id="heatmap"></div></div>
+          <div class="cc"><div class="cc-title">Monthly precipitation by city (inches)</div><div class="ch ch-lg"><canvas id="c-prec"></canvas></div></div>
+        </div>
+        <div class="g2">
+          <div class="cc"><div class="cc-title">Average annual humidity by city (%)</div><div class="ch ch-lg"><canvas id="c-humid"></canvas></div></div>
+          <div class="cc"><div class="cc-title">Avg annual precipitation vs avg daily sunshine hours (by city)</div><div class="ch ch-lg"><canvas id="c-sun"></canvas></div></div>
+        </div>
+        <div class="note">NOAA 1991–2020 Climate Normals. Representative stations per city.</div>
+      </div>
+
+      <!-- ── DASH 3 ── -->
+      <div class="dash-content" id="dash-3">
+        <div class="dash-hdr">
+          <h2>World Development Indicators</h2>
+          <div class="src">World Bank WDI · 20 countries · 2022</div>
+        </div>
+        <div class="filters">
+          <span class="fl">Region</span>
+          <span class="chip on" data-region="Europe" data-action="toggleRegion">Europe</span>
+          <span class="chip on" data-region="Americas" data-action="toggleRegion">Americas</span>
+          <span class="chip on" data-region="Asia" data-action="toggleRegion">Asia</span>
+          <span class="chip on" data-region="Africa" data-action="toggleRegion">Africa</span>
+        </div>
+        <div class="kpi-row n4">
+          <div class="kpi world"><div class="kpi-lbl">Highest GDP/Capita</div><div class="kpi-val">$72,850</div><div class="kpi-delta" style="color:var(--muted)">Norway</div></div>
+          <div class="kpi world"><div class="kpi-lbl">Highest Life Expectancy</div><div class="kpi-val">84.3 yrs</div><div class="kpi-delta" style="color:var(--muted)">Japan</div></div>
+          <div class="kpi world"><div class="kpi-lbl">Highest CO₂/Capita</div><div class="kpi-val">14.9 t</div><div class="kpi-delta neg">Canada</div></div>
+          <div class="kpi world"><div class="kpi-lbl">Lowest Internet Access</div><div class="kpi-val">22%</div><div class="kpi-delta neg">Ethiopia</div></div>
+        </div>
+        <!-- Full-width bubble -->
+        <div class="g1">
+          <div class="cc"><div class="cc-title">GDP per capita vs life expectancy — bubble size proportional to population</div><div class="ch ch-lg"><canvas id="c-bubble"></canvas></div></div>
+        </div>
+        <!-- 2×2 -->
+        <div class="g2">
+          <div class="cc"><div class="cc-title">CO₂ emissions per capita by country (tonnes)</div><div class="ch ch-lg"><canvas id="c-co2"></canvas></div></div>
+          <div class="cc"><div class="cc-title">Internet access (%) vs life expectancy</div><div class="ch ch-lg"><canvas id="c-inet"></canvas></div></div>
+        </div>
+        <div class="note">World Bank WDI 2022. Population proportional to bubble radius.</div>
+      </div>
+
+      <!-- ── DASH 4 ── -->
+      <div class="dash-content" id="dash-4">
+        <div class="dash-hdr">
+          <h2>Online Retail Performance</h2>
+          <div class="src">UCI Online Retail II · 1,067,371 transactions · Dec 2009–Dec 2011</div>
+        </div>
+        <div class="kpi-row n4">
+          <div class="kpi ecom"><div class="kpi-lbl">Total Revenue</div><div class="kpi-val">£9.74M</div><div class="kpi-delta pos">↑ 18.2% YoY</div></div>
+          <div class="kpi ecom"><div class="kpi-lbl">Total Orders</div><div class="kpi-val">57,318</div><div class="kpi-delta pos">↑ 11.4% YoY</div></div>
+          <div class="kpi ecom"><div class="kpi-lbl">Avg Order Value</div><div class="kpi-val">£170.10</div><div class="kpi-delta pos">↑ 6.1%</div></div>
+          <div class="kpi ecom"><div class="kpi-lbl">Return Rate</div><div class="kpi-val">8.3%</div><div class="kpi-delta neg">↑ 1.2 pts</div></div>
+        </div>
+        <!-- Full-width revenue comparison -->
+        <div class="g1">
+          <div class="cc"><div class="cc-title">Monthly revenue trend — 2010 vs 2011 (£ thousands)</div><div class="ch ch-md"><canvas id="c-rev"></canvas></div></div>
+        </div>
+        <!-- 2×2 -->
+        <div class="g2">
+          <div class="cc"><div class="cc-title">Revenue by country — top 10 excl. UK</div><div class="ch ch-lg"><canvas id="c-ctry"></canvas></div></div>
+          <div class="cc"><div class="cc-title">Avg order value &amp; return rate trend, 2011</div><div class="ch ch-lg"><canvas id="c-aov"></canvas></div></div>
+        </div>
+        <div class="g2">
+          <div class="cc"><div class="cc-title">Transactions by hour of day</div><div class="ch ch-lg"><canvas id="c-hr"></canvas></div></div>
+          <div class="cc"><div class="cc-title">Revenue share by product category</div><div class="ch ch-lg"><canvas id="c-pie"></canvas></div></div>
+        </div>
+        <div class="note">UCI Online Retail II (Chen et al., 2012). UK-based online gift &amp; homeware retailer.</div>
+      </div>
+
+    </div><!-- /dash-panel -->
+
+    <!-- QUESTION PANEL -->
+    <div class="q-panel">
+      <div class="qp-hdr">
+        <div class="qp-title" id="qp-title">Dashboard 1 · University Enrollment</div>
+        <div class="qp-sub" id="qp-sub">Questions Q1–Q6 · 5 multiple choice + 1 short answer</div>
+      </div>
+      <div id="q-wrap"></div>
+    </div>
+  </div>
+
+  <div class="submit-bar">
+    <div class="sub-info">Answered: <strong id="ans-n">0</strong> of <strong>24</strong></div>
+    <button class="btn-sub" id="btn-sub" disabled data-action="submit">Submit Assessment</button>
+  </div>
+</div>
+
+<!-- ════════════════════════ RESULTS ════════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">Dash-LAT <em>· Results</em></div>
+    <div class="topbar-right"><div class="topbar-name" id="res-nb"></div></div>
+  </div>
+  <div class="res-scroll"><div class="res-body">
+    <div class="res-hero">
+      <div class="res-score">
+        <div class="rs-eye">Your Score</div>
+        <div class="rs-num" id="r-sc">—</div>
+        <div class="rs-of">out of 20 questions</div>
+        <div class="rs-pct" id="r-pct">—</div>
+        <div class="rs-pill" id="r-lv">—</div>
+      </div>
+      <div class="res-info">
+        <h2 id="r-lt">—</h2>
+        <p id="r-ld">—</p>
+        <p style="font-size:.7rem;color:#aaa">Grounded in the VLAT (Lee et al., 2017) and CALVI (Ge et al., 2023) visualisation literacy frameworks.</p>
+      </div>
+    </div>
+
+    <div class="sec">Performance by Competency</div>
+    <div class="dim-grid-r" id="dim-r"></div>
+
+    <div class="sec">Performance by Dashboard</div>
+    <div class="dash-bars" id="dash-bars"></div>
+
+    <div class="sec">Item Review</div>
+    <div class="item-list" id="i-list"></div>
+
+    <div class="res-actions">
+      <button class="btn-exp" data-action="exportJSON">↓ Export Results (JSON)</button>
+      <button class="btn-rst" data-action="restart">Retake</button>
+    </div>
+  </div></div><!-- /res-scroll -->
+</div>
+
+<script>
+(function() {
+function init() {
+// ══════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════
+const INST = ["Westfield","Metro Tech","Lakewood St.","Crestview A&M","Greendale","Summit","Riverbend","Harborview"];
+const YEARS = [2016,2017,2018,2019,2020,2021,2022,2023,2024];
+const ENROLL = {
+  "Westfield":     [7800,8000,8200,8450,8100,8050,8300,8600,8900],
+  "Metro Tech":    [5200,5400,5600,5800,4200,4800,6100,6500,6800],
+  "Lakewood St.":  [4200,4350,4500,4700,4600,4800,5200,5600,6100],
+  "Crestview A&M": [3600,3700,3800,3900,3850,3900,4000,4100,4200],
+  "Greendale":     [7500,7300,7200,7100,6800,6600,6500,6400,6300],
+  "Summit":        [5400,5300,5100,5000,4900,4700,4600,4500,4400],
+  "Riverbend":     [2900,3050,3200,3400,3300,3500,3700,3900,4100],
+  "Harborview":    [5800,5900,6000,6100,5800,5900,6000,6200,6400]
+};
+const RET  = {Westfield:82,"Metro Tech":71,"Lakewood St.":74,"Crestview A&M":88,Greendale:68,Summit:76,Riverbend:79,Harborview:80};
+const GRAD = {Westfield:67,"Metro Tech":48,"Lakewood St.":55,"Crestview A&M":74,Greendale:42,Summit:58,Riverbend:61,Harborview:63};
+const NETP = {Westfield:22400,"Metro Tech":12800,"Lakewood St.":15600,"Crestview A&M":28400,Greendale:9200,Summit:18900,Riverbend:14200,Harborview:20100};
+const PELL = {Westfield:35,"Metro Tech":52,"Lakewood St.":44,"Crestview A&M":22,Greendale:61,Summit:38,Riverbend:48,Harborview:30};
+const STF  = {Westfield:16,"Metro Tech":22,"Lakewood St.":19,"Crestview A&M":12,Greendale:25,Summit:18,Riverbend:20,Harborview:15}; // student:faculty
+const RET_TREND = { // retention rate by year 2020-2024
+  "Westfield":    [79,80,81,82,82], "Metro Tech":  [67,68,70,71,71],
+  "Lakewood St.": [72,73,73,74,74], "Crestview A&M":[85,86,87,88,88],
+  "Greendale":    [65,65,66,67,68], "Summit":       [74,75,76,76,76],
+  "Riverbend":    [76,77,78,79,79], "Harborview":   [78,79,80,80,80]
+};
+
+const MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const TEMPS = {
+  Miami:     [68,70,74,77,80,83,84,84,82,79,74,70],
+  Seattle:   [42,44,48,52,58,63,67,67,62,54,46,41],
+  Chicago:   [26,30,40,51,62,72,77,75,67,55,42,30],
+  Phoenix:   [56,60,66,74,84,94,106,104,96,82,66,56],
+  "New York":[34,36,44,54,64,74,79,78,70,59,48,38],
+  Denver:    [32,35,43,50,60,70,76,74,65,52,40,32]
+};
+const PREC = {
+  Miami:     [2.0,2.3,2.9,3.2,5.3,9.7,6.5,8.6,9.8,6.3,3.3,2.1],
+  Seattle:   [5.6,3.5,3.8,2.7,2.0,1.5,0.7,0.9,1.6,3.5,5.7,5.9],
+  Chicago:   [2.1,1.8,2.7,3.6,4.1,4.1,3.6,4.1,3.3,3.2,3.4,2.5],
+  Phoenix:   [0.7,0.8,0.9,0.3,0.1,0.1,0.9,1.0,0.7,0.6,0.6,0.9],
+  "New York":[3.6,3.1,4.3,4.5,4.2,4.5,4.6,4.4,4.3,4.4,3.6,3.8],
+  Denver:    [0.5,0.5,1.3,1.8,2.3,1.8,2.2,1.8,1.3,1.0,0.9,0.6]
+};
+
+const WLD = [
+  {c:"Germany",  gdp:51200,life:81.3,pop:83, co2:7.9, net:93, r:"Europe"},
+  {c:"France",   gdp:43500,life:82.5,pop:67, co2:4.5, net:90, r:"Europe"},
+  {c:"UK",       gdp:46500,life:81.0,pop:67, co2:5.2, net:95, r:"Europe"},
+  {c:"Sweden",   gdp:55800,life:83.1,pop:10, co2:3.6, net:97, r:"Europe"},
+  {c:"Norway",   gdp:72850,life:83.5,pop:5,  co2:7.4, net:98, r:"Europe"},
+  {c:"Poland",   gdp:18900,life:77.5,pop:38, co2:8.2, net:84, r:"Europe"},
+  {c:"USA",      gdp:65000,life:78.9,pop:331,co2:14.2,net:92, r:"Americas"},
+  {c:"Canada",   gdp:52100,life:82.3,pop:38, co2:14.9,net:94, r:"Americas"},
+  {c:"Brazil",   gdp:8900, life:75.9,pop:214,co2:2.1, net:81, r:"Americas"},
+  {c:"Mexico",   gdp:10600,life:75.1,pop:126,co2:3.8, net:76, r:"Americas"},
+  {c:"China",    gdp:12600,life:77.1,pop:1411,co2:8.0,net:74, r:"Asia"},
+  {c:"Japan",    gdp:40300,life:84.3,pop:125,co2:8.5, net:93, r:"Asia"},
+  {c:"India",    gdp:2400, life:70.2,pop:1393,co2:1.9,net:44, r:"Asia"},
+  {c:"S. Korea", gdp:33600,life:83.6,pop:52, co2:11.6,net:97, r:"Asia"},
+  {c:"Indonesia",gdp:4300, life:71.7,pop:276,co2:2.3, net:54, r:"Asia"},
+  {c:"Nigeria",  gdp:2200, life:53.5,pop:218,co2:0.6, net:45, r:"Africa"},
+  {c:"S. Africa",gdp:6700, life:64.9,pop:60, co2:7.2, net:68, r:"Africa"},
+  {c:"Kenya",    gdp:2100, life:67.4,pop:55, co2:0.4, net:40, r:"Africa"},
+  {c:"Egypt",    gdp:3700, life:72.1,pop:104,co2:2.5, net:72, r:"Africa"},
+  {c:"Ethiopia", gdp:960,  life:67.8,pop:123,co2:0.2, net:22, r:"Africa"},
+];
+// region colours — used only for differentiation in multi-series charts
+const RC = {Europe:"#1c3d5a",Americas:"#7a3a20",Asia:"#26674a",Africa:"#6a5218"};
+
+const EC_REV_2010 = [392,318,456,421,498,372,344,381,490,612,728,841];
+const EC_REV_2011 = [428,352,511,479,562,431,398,444,567,703,896,1187];
+const EC_CTRY = ["Netherlands","Germany","EIRE","France","Australia","Spain","Switzerland","Belgium","Portugal","Japan"];
+const EC_CREV = [284,221,196,183,138,61,56,41,29,25];
+const EC_HOURLY = [12,8,4,3,2,5,48,142,487,832,1024,1156,1089,956,1044,1132,1023,841,563,284,141,67,38,18];
+const EC_CATS = ["Home Decor","Giftware","Seasonal","Kitchen","Stationery","Novelty","Outdoor"];
+const EC_CPCT = [28,22,18,14,9,5,4];
+const EC_AOV = [142,151,158,163,171,155,148,162,178,189,195,214]; // avg order value by month 2011 (£)
+const EC_RETURNS = [5.2,5.8,6.1,6.9,7.2,7.8,7.4,8.0,8.1,8.6,9.1,9.8]; // return rate % by month 2011
+// D2 extra: avg humidity & sunshine hours
+const HUMID = {Miami:[76,76,74,73,76,80,80,81,82,81,79,77],Seattle:[82,79,74,68,65,63,57,57,68,78,84,84],Chicago:[75,74,69,63,63,66,65,66,69,68,72,76],Phoenix:[48,44,36,25,21,17,33,36,28,28,38,45],"New York":[62,61,58,57,62,65,65,67,71,68,65,63],Denver:[57,55,50,45,44,43,43,44,44,46,53,57]};
+const SUNSHINE = {Miami:[7.2,8.4,9.0,9.6,9.4,8.7,8.2,8.1,7.4,7.9,7.7,7.0],Seattle:[2.6,3.7,5.3,6.7,8.0,8.5,10.1,9.3,6.3,3.8,2.3,1.9],Chicago:[4.4,5.4,6.5,7.5,8.9,10.4,10.9,10.2,8.3,6.6,4.2,3.8],Phoenix:[7.7,8.5,9.6,10.8,11.8,12.3,10.4,10.0,9.9,10.4,8.9,7.5],"New York":[4.9,5.8,6.5,7.2,8.0,8.9,9.3,8.8,7.2,5.9,4.4,4.1],Denver:[6.1,6.8,7.6,8.5,9.3,10.4,10.2,9.7,8.6,7.4,5.9,5.6]};
+// Pre-computed city averages for scatter
+const avg = (arr) => arr.reduce((a,b)=>a+b,0)/arr.length;
+const CITY_LIST = ["Miami","Seattle","Chicago","Phoenix","New York","Denver"];
+
+
+
+// ══════════════════════════════════════════════════════
+// CHART HELPERS
+// ══════════════════════════════════════════════════════
+const CI = {};
+function mk(id, cfg) {
+  if(typeof Chart === 'undefined') return;
+  if(CI[id]) { try{ CI[id].destroy(); }catch(e){} }
+  const el = document.getElementById(id);
+  if(!el) return;
+  try { CI[id] = new Chart(el, cfg); } catch(e) { console.warn('Chart error', id, e); }
+}
+const TK = {font:{family:"'DM Mono',monospace",size:8},color:"#9e9c96",padding:4};
+const GR = {color:"#eae8e2",drawBorder:false};
+const LG = {labels:{font:{family:"'DM Sans',sans-serif",size:9.5},color:"#72706a",boxWidth:8,boxHeight:8,padding:10,usePointStyle:true,pointStyle:"circle"}};
+
+// 6 visually distinct, low-saturation series colours
+const S = ["#1c3d5a","#b5451b","#2a7a4b","#7b3fa0","#b58a00","#1a7070","#c0392b","#5d4a1a"]; // 8 distinct institution colors
+
+function baseOpts(o={}){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false,...(o.legend||{})}, tooltip:{...(o.tt||{})} },
+    scales:{
+      x:{ticks:TK, grid:GR, border:{display:false}, ...(o.x||{})},
+      y:{ticks:TK, grid:GR, border:{display:false}, ...(o.y||{})}
+    },
+    ...(o.extra||{})
+  };
+}
+
+// ══════════════════════════════════════════════════════
+// DRAW ALL
+// ══════════════════════════════════════════════════════
+function drawAll(){ drawD1(); drawD2(); drawD3(); drawD4(); }
+
+function drawD1(){
+  // Enrollment line — legend on right for clear reading
+  mk("c-el",{
+    type:"line",
+    data:{
+      labels:YEARS,
+      datasets:INST.map((n,i)=>({
+        label:n, data:ENROLL[n],
+        borderColor:S[i%S.length], backgroundColor:"transparent",
+        tension:.35, borderWidth:2, pointRadius:3, pointHoverRadius:5
+      }))
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"right",...LG},
+        tooltip:{mode:"index",intersect:false}
+      },
+      scales:{
+        x:{ticks:{...TK,maxRotation:0},grid:GR},
+        y:{ticks:{...TK,callback:v=>(v/1000).toFixed(0)+"k"},grid:GR}
+      },
+      interaction:{mode:"nearest",axis:"x",intersect:false}
+    }
+  });
+
+  // Scatter net price vs grad — one point per institution, distinct color each
+  mk("c-scat",{
+    type:"scatter",
+    data:{datasets:INST.map((inst,i)=>({
+      label:inst,
+      data:[{x:NETP[inst]/1000,y:GRAD[inst]}],
+      backgroundColor:S[i]+"cc", borderColor:S[i],
+      pointRadius:9, pointHoverRadius:11, borderWidth:1.5
+    }))},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"right",...LG},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: $${ctx.parsed.x}k net · ${ctx.parsed.y}% grad`}}
+      },
+      scales:{
+        x:{ticks:{...TK,callback:v=>"$"+v+"k"},grid:GR,title:{display:true,text:"Net Price ($k)",font:{family:"'DM Mono'",size:8},color:"#aaa"}},
+        y:{ticks:{...TK,callback:v=>v+"%"},grid:GR,min:35,max:80,title:{display:true,text:"Grad Rate %",font:{family:"'DM Mono'",size:8},color:"#aaa"}}
+      }
+    }
+  });
+
+  // Pell vs grad — clustered horizontal bar, institution name on y-axis with axis title
+  mk("c-pell",{
+    type:"bar", indexAxis:"y",
+    data:{
+      labels:INST,
+      datasets:[
+        {label:"Pell Grant %", data:INST.map(i=>PELL[i]), backgroundColor:"#5280a4cc", borderColor:"#5280a4", borderWidth:1, borderRadius:2, barThickness:9},
+        {label:"Grad Rate %",  data:INST.map(i=>GRAD[i]), backgroundColor:"#1c3d5a", borderRadius:2, barThickness:9}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:"top",...LG},tooltip:{mode:"index",intersect:false,callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.x}%`}}},
+      scales:{
+        x:{ticks:{...TK,callback:v=>v+"%"},grid:GR,max:80,title:{display:true,text:"Percentage (%)",font:{family:"'DM Mono'",size:8},color:"#aaa"}},
+        y:{ticks:{...TK,font:{...TK.font,size:8}},grid:{display:false},border:{display:false},
+           title:{display:true,text:"Institution",font:{family:"'DM Sans'",size:8},color:"#aaa"}}
+      }
+    }
+  });
+
+  // Scatter: retention rate vs student-to-faculty ratio — one point per institution, distinct color
+  mk("c-stf",{
+    type:"scatter",
+    data:{datasets:INST.map((inst,i)=>({
+      label:inst,
+      data:[{x:STF[inst],y:RET[inst]}],
+      backgroundColor:S[i]+"cc", borderColor:S[i],
+      pointRadius:9, pointHoverRadius:11, borderWidth:1.5
+    }))},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"right",...LG},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.x}:1 ratio · ${ctx.parsed.y}% retention`}}
+      },
+      scales:{
+        x:{ticks:TK,grid:GR,min:10,max:28,title:{display:true,text:"Students per Faculty",font:{family:"'DM Mono'",size:8},color:"#aaa"}},
+        y:{ticks:{...TK,callback:v=>v+"%"},grid:GR,min:60,max:95,title:{display:true,text:"Retention Rate %",font:{family:"'DM Mono'",size:8},color:"#aaa"}}
+      }
+    }
+  });
+}
+
+let aCities = new Set(["Miami","Seattle","Chicago","Phoenix","New York","Denver"]);
+const CC = {Miami:"#1c3d5a",Seattle:"#7a3a20",Chicago:"#4e3e70",Phoenix:"#6a5218","New York":"#26674a",Denver:"#2e5e72"};
+
+function drawD2(){
+  const cities = [...aCities];
+
+  // Temperature line — full width, legend right
+  mk("c-temp",{
+    type:"line",
+    data:{
+      labels:MO,
+      datasets:cities.map(c=>({
+        label:c, data:TEMPS[c],
+        borderColor:CC[c], backgroundColor:"transparent",
+        tension:.4, borderWidth:2.5, pointRadius:3, pointHoverRadius:6
+      }))
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"right",...LG},
+        tooltip:{mode:"index",intersect:false}
+      },
+      scales:{
+        x:{ticks:TK,grid:GR},
+        y:{ticks:{...TK,callback:v=>v+"°F"},grid:GR}
+      },
+      interaction:{mode:"nearest",axis:"x",intersect:false}
+    }
+  });
+
+  // Precipitation grouped bar
+  mk("c-prec",{
+    type:"bar",
+    data:{
+      labels:MO,
+      datasets:cities.map(c=>({
+        label:c, data:PREC[c],
+        backgroundColor:CC[c]+"cc", borderRadius:1
+      }))
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:"right",...LG},tooltip:{mode:"index",intersect:false}},
+      scales:{
+        x:{ticks:TK,grid:GR},
+        y:{ticks:{...TK,callback:v=>v+'"'},grid:GR}
+      }
+    }
+  });
+
+  // Heatmap
+  const el = document.getElementById("heatmap");
+  if(!el) return;
+  const all = cities.flatMap(c=>TEMPS[c]);
+  const mn = Math.min(...all), mx = Math.max(...all);
+  const col = v => {
+    const t = (v-mn)/(mx-mn);
+    return `rgb(${Math.round(210*t+40*(1-t))},${Math.round(140*t+90*(1-t))},${Math.round(50*t+140*(1-t))})`;
+  };
+  const fg = v => (v-mn)/(mx-mn) > .55 ? "fff":"333";
+  let h = `<table class="hm-tbl"><thead><tr><th></th>${MO.map(m=>`<th>${m}</th>`).join("")}</tr></thead><tbody>`;
+  cities.forEach(c=>{
+    h+=`<tr><td class="hm-city">${c}</td>`;
+    TEMPS[c].forEach(v=>{h+=`<td style="background:${col(v)};color:#${fg(v)}">${v}</td>`;});
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table>`;
+  el.innerHTML=h;
+
+  // Humidity — horizontal bar, city name on y-axis, value shown as bar label (no % axis clutter)
+  const hcities = [...aCities].filter(c=>HUMID[c]);
+  mk("c-humid",{
+    type:"bar", indexAxis:"y",
+    data:{
+      labels:hcities,
+      datasets:[{
+        label:"Avg Annual Humidity %",
+        data:hcities.map(c=>parseFloat(avg(HUMID[c]).toFixed(1))),
+        backgroundColor:hcities.map(c=>CC[c]+"cc"),
+        borderColor:hcities.map(c=>CC[c]),
+        borderWidth:1, borderRadius:4, barThickness:24,
+        datalabels:{anchor:"end",align:"end",color:"#888",font:{family:"'DM Mono'",size:9},formatter:v=>v+"%"}
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed.x}% avg annual humidity`}}
+      },
+      scales:{
+        x:{display:false, min:0, max:110},
+        y:{ticks:{...TK,font:{family:"'DM Sans'",size:10},color:"#ccc"},grid:{display:false},border:{display:false}}
+      }
+    }
+  });
+
+  // Scatter: avg annual precipitation vs avg daily sunshine — one point per city
+  mk("c-sun",{
+    type:"scatter",
+    data:{datasets:hcities.filter(c=>PREC[c]&&SUNSHINE[c]).map(c=>({
+      label:c,
+      data:[{x:parseFloat(avg(PREC[c]).toFixed(2)),y:parseFloat(avg(SUNSHINE[c]).toFixed(2))}],
+      backgroundColor:CC[c]+"cc", borderColor:CC[c],
+      pointRadius:10, pointHoverRadius:13, borderWidth:1.5
+    }))},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"right",...LG},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.x}" precip · ${ctx.parsed.y}h sun`}}
+      },
+      scales:{
+        x:{ticks:{...TK,callback:v=>v+'"'},grid:GR,title:{display:true,text:"Avg Monthly Precip (inches)",font:{family:"'DM Mono'",size:8},color:"#aaa"}},
+        y:{ticks:{...TK,callback:v=>v+"h"},grid:GR,title:{display:true,text:"Avg Daily Sunshine (hours)",font:{family:"'DM Mono'",size:8},color:"#aaa"}}
+      }
+    }
+  });
+}
+
+let aRegions = new Set(["Europe","Americas","Asia","Africa"]);
+
+function drawD3(){
+  const d = WLD.filter(x=>aRegions.has(x.r));
+
+  mk("c-bubble",{
+    type:"bubble",
+    data:{
+      datasets:[...new Set(d.map(x=>x.r))].map(reg=>{
+        const rd=d.filter(x=>x.r===reg);
+        return {
+          label:reg,
+          data:rd.map(x=>({x:x.gdp,y:x.life,r:Math.max(4,Math.sqrt(x.pop)*.85),lbl:x.c})),
+          backgroundColor:RC[reg]+"88", borderColor:RC[reg], borderWidth:1
+        };
+      })
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"right",...LG},
+        tooltip:{callbacks:{label:ctx=>`${ctx.raw.lbl}: $${ctx.raw.x.toLocaleString()} · ${ctx.raw.y}yr`}}
+      },
+      scales:{
+        x:{ticks:{...TK,callback:v=>"$"+(v/1000).toFixed(0)+"k"},grid:GR,title:{display:true,text:"GDP per Capita",font:{family:"'DM Mono'",size:8},color:"#aaa"}},
+        y:{ticks:TK,grid:GR,min:50,max:87,title:{display:true,text:"Life Expectancy (yrs)",font:{family:"'DM Mono'",size:8},color:"#aaa"}}
+      }
+    }
+  });
+
+  const cs = [...d].sort((a,b)=>b.co2-a.co2);
+  mk("c-co2",{
+    type:"bar", indexAxis:"y",
+    data:{
+      labels:cs.map(x=>x.c),
+      datasets:[{data:cs.map(x=>x.co2),backgroundColor:cs.map(x=>RC[x.r]+"bb"),borderRadius:2}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${cs[ctx.dataIndex].c}: ${ctx.parsed.x}t`}}},
+      scales:{x:{ticks:TK,grid:GR},y:{ticks:{...TK,font:{...TK.font,size:8}},grid:{display:false}}}
+    }
+  });
+
+  mk("c-inet",{
+    type:"scatter",
+    data:{datasets:[{
+      data:d.map(x=>({x:x.net,y:x.life,lbl:x.c,r:x.r})),
+      backgroundColor:d.map(x=>RC[x.r]+"99"),
+      borderColor:d.map(x=>RC[x.r]),
+      borderWidth:1, pointRadius:6, pointHoverRadius:8
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${ctx.raw.lbl}: ${ctx.parsed.x}% · ${ctx.parsed.y}yr`}}
+      },
+      scales:{
+        x:{ticks:{...TK,callback:v=>v+"%"},grid:GR,min:0,max:100,title:{display:true,text:"Internet Access %",font:{family:"'DM Mono'",size:8},color:"#aaa"}},
+        y:{ticks:TK,grid:GR,min:50,max:87,title:{display:true,text:"Life Exp. (yrs)",font:{family:"'DM Mono'",size:8},color:"#aaa"}}
+      }
+    }
+  });
+}
+
+function drawD4(){
+  const MO_FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  mk("c-rev",{
+    type:"line",
+    data:{
+      labels:MO,
+      datasets:[
+        {label:"2010",data:EC_REV_2010,borderColor:"#c8c6c0",backgroundColor:"#c8c6c018",fill:true,tension:.4,borderWidth:2,pointRadius:4,pointHoverRadius:6},
+        {label:"2011",data:EC_REV_2011,borderColor:"#1c3d5a",backgroundColor:"#1c3d5a14",fill:true,tension:.4,borderWidth:2.5,pointRadius:4,pointHoverRadius:6}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:"top",...LG},tooltip:{mode:"index",intersect:false,callbacks:{label:ctx=>`${ctx.dataset.label}: £${ctx.parsed.y}k`}}},
+      scales:{
+        x:{ticks:TK,grid:GR},
+        y:{ticks:{...TK,callback:v=>"£"+v+"k"},grid:GR}
+      },
+      interaction:{mode:"nearest",axis:"x",intersect:false}
+    }
+  });
+
+  mk("c-ctry",{
+    type:"bar", indexAxis:"y",
+    data:{
+      labels:EC_CTRY,
+      datasets:[{data:EC_CREV,backgroundColor:EC_CTRY.map((_,i)=>S[i%S.length]),borderRadius:3,barThickness:16}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: £${ctx.parsed.x}k`}}
+      },
+      scales:{
+        x:{display:false,min:0,max:340},
+        y:{ticks:{...TK,font:{family:"'DM Sans'",size:9},color:"#ccc"},grid:{display:false},border:{display:false}}
+      }
+    }
+  });
+
+  const HR_LABELS = ["12 AM","1 AM","2 AM","3 AM","4 AM","5 AM","6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM","4 PM","5 PM","6 PM","7 PM","8 PM","9 PM","10 PM","11 PM"];
+  mk("c-hr",{
+    type:"line",
+    data:{
+      labels:HR_LABELS,
+      datasets:[{data:EC_HOURLY,borderColor:"#1c3d5a",backgroundColor:"#1c3d5a18",fill:true,tension:.4,borderWidth:2,pointRadius:0}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:ctx=>ctx[0].label,label:ctx=>`${ctx.parsed.y.toLocaleString()} transactions`}}},
+      scales:{
+        x:{ticks:{...TK,maxTicksLimit:8},grid:GR},
+        y:{ticks:{...TK,callback:v=>v>=1000?(v/1000).toFixed(0)+"k":v},grid:GR}
+      }
+    }
+  });
+
+  // Doughnut — categorically distinct colours
+  const catColors = ["#1c3d5a","#7a3a20","#26674a","#4e3e70","#6a5218","#2e5e72","#8b2828"];
+  mk("c-pie",{
+    type:"doughnut",
+    data:{
+      labels:EC_CATS,
+      datasets:[{data:EC_CPCT,backgroundColor:catColors,borderWidth:2,borderColor:"#fff",hoverOffset:6}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"right",...LG},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}
+      },
+      cutout:"52%"
+    }
+  });
+
+  // AOV & return rate — line chart, month on x-axis (time series makes sense here)
+  mk("c-aov",{
+    type:"line",
+    data:{
+      labels:MO,
+      datasets:[
+        {label:"Avg Order Value (£)",data:EC_AOV,borderColor:"#1c3d5a",backgroundColor:"#1c3d5a14",fill:true,tension:.4,borderWidth:2.5,pointRadius:4,pointHoverRadius:6,yAxisID:"y"},
+        {label:"Return Rate (%)",data:EC_RETURNS,borderColor:"#b5451b",backgroundColor:"transparent",tension:.4,borderWidth:2,pointRadius:4,borderDash:[4,3],yAxisID:"y2"}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:"top",...LG},tooltip:{mode:"index",intersect:false,callbacks:{label:ctx=>ctx.datasetIndex===0?`AOV: £${ctx.parsed.y}`:ctx.datasetIndex===1?`Return Rate: ${ctx.parsed.y}%`:""}}},
+      scales:{
+        x:{ticks:TK,grid:GR},
+        y:{ticks:{...TK,callback:v=>"£"+v},grid:GR,title:{display:true,text:"AOV (£)",font:{family:"'DM Mono'",size:8},color:"#aaa"}},
+        y2:{ticks:{...TK,callback:v=>v+"%"},grid:{display:false},position:"right",title:{display:true,text:"Return %",font:{family:"'DM Mono'",size:8},color:"#aaa"}}
+      },
+      interaction:{mode:"nearest",axis:"x",intersect:false}
+    }
+  });
+}
+
+
+
+// ══════════════════════════════════════════════════════
+// QUESTIONS
+// ══════════════════════════════════════════════════════
+const QS = [
+  {id:"q1", dash:1, bloom:"Remember", chart:"Pell Grant Bar",
+   stem:"In the Pell Grant vs graduation rate chart, the y-axis lists institution names. Which institution has the <strong>longest Grad Rate bar</strong> — the highest 6-year graduation rate?",
+   opts:["Westfield","Crestview A&M","Lakewood St.","Greendale"], ans:1,
+   fb:"Crestview A&M's Grad Rate bar extends to 74% — the furthest right of all institutions on that metric."},
+
+  {id:"q2", dash:1, bloom:"Analyze", chart:"Line Chart",
+   stem:"The enrollment trend covers 2016–2024. Which institution shows the sharpest <strong>V-shaped disruption</strong> — a steep drop followed by a strong recovery?",
+   opts:["Westfield","Metro Tech","Greendale","Harborview"], ans:1,
+   fb:"Metro Tech dropped from ~5,800 (2019) to ~4,200 (2020) then recovered to 6,800 by 2024 — the most dramatic non-linear pattern in the dataset."},
+
+  {id:"q3", dash:1, bloom:"Analyze", chart:"Net Price Scatter + Pell Bar",
+   stem:"Find Greendale's colour in the Pell Grant bar chart. Its Pell bar extends much further than its Grad Rate bar. Combined with its position on the net price vs graduation scatter, what best explains Greendale's low graduation rate (42%)?",
+   opts:["Greendale has too few faculty members","Greendale's Pell Grant share reaches 61% — the highest of any institution — indicating a large share of financially at-risk students who face barriers beyond tuition cost","Low net price directly suppresses graduation rates","Greendale is an outlier that should be excluded from analysis"],
+   ans:1, fb:"The Pell bar for Greendale extends to 61% — far beyond its 42% grad rate bar. Cross-referencing with the scatter confirms it sits at the low-price, low-outcome corner. High Pell share is the most analytically supported explanation."},
+
+  {id:"q4", dash:1, bloom:"Analyze", chart:"Retention vs STF Scatter",
+   stem:"The retention rate vs student-to-faculty ratio scatter shows Greendale has the <strong>highest student load per faculty member</strong>. What pattern does this suggest?",
+   opts:["High student-faculty ratios always improve retention through peer learning","Greendale's high student load (25:1) aligns with its low retention (68%) — suggesting resource strain may contribute to poor outcomes","Student-to-faculty ratio and retention are unrelated","Crestview A&M has the highest faculty load"],
+   ans:1, fb:"Crestview A&M has the lowest ratio (12:1) and highest retention (88%). Greendale has the highest ratio (25:1) and lowest retention (68%). The scatter reveals this inverse relationship directly."},
+
+  {id:"q5", dash:1, bloom:"Evaluate", chart:"All Charts",
+   stem:"A student wants an institution balancing <strong>affordability and academic quality</strong>. Using the net price vs graduation rate scatter and the enrollment trend, which offers the best combination?",
+   opts:["Crestview A&M — high retention (88%) and grad rate (74%), despite being the most expensive","Lakewood St. — moderate net price ($15,600), strong enrollment growth, solid grad rate (55%)","Greendale — lowest price ($9,200) makes it most accessible","Metro Tech — best enrollment recovery shows institutional resilience"],
+   ans:1, fb:"Lakewood St. offers the best holistic value: moderate cost, strong enrollment growth trajectory, and a solid graduation rate. Cross-chart synthesis is the key skill here."},
+
+  {id:"q6", dash:2, bloom:"Remember", chart:"Precipitation Bar",
+   stem:"According to the monthly precipitation chart, which city has the <strong>highest precipitation in September</strong>?",
+   opts:["Seattle","Chicago","Miami","New York"], ans:2,
+   fb:"Miami reaches 9.8 inches in September — its peak month due to Atlantic hurricane season."},
+
+  {id:"q7", dash:2, bloom:"Analyze", chart:"Temperature Line",
+   stem:"Which city has the <strong>smallest annual temperature range</strong> — the smallest gap between its coldest and hottest month?",
+   opts:["Chicago","Denver","Miami","Phoenix"], ans:2,
+   fb:"Miami ranges from 68°F (Jan) to 84°F (Jul/Aug) — just 16°F. Chicago spans 51°F. Miami's maritime position buffers seasonal extremes."},
+
+  {id:"q8", dash:2, bloom:"Analyze", chart:"Heatmap + Precipitation",
+   stem:"The heatmap shows Phoenix peaks at 106°F in July, yet the precipitation chart shows Phoenix precipitation also <strong>peaks in July–August</strong>. What meteorological phenomenon does this reveal?",
+   opts:["Phoenix has the most rainfall overall","A data recording error","Arizona's North American Monsoon — summer storm systems bringing intense rainfall to the desert Southwest despite extreme heat","Phoenix's UV index causes evaporation before rain reaches the ground"],
+   ans:2, fb:"Arizona's North American Monsoon (July–September) draws Gulf of Mexico moisture northward, producing brief but intense desert thunderstorms — a cross-chart insight invisible from either chart alone."},
+
+  {id:"q9", dash:2, bloom:"Analyze", chart:"Precip vs Sunshine Scatter",
+   stem:"In the avg precipitation vs avg sunshine scatter, Phoenix plots in the <strong>upper-left area</strong> while Seattle plots in the <strong>lower-right area</strong>. What do these positions reveal?",
+   opts:["Both cities have similar climates despite different latitudes","Phoenix has low average precipitation and high sunshine hours — an arid sunny climate; Seattle has high precipitation and low sunshine — a cool overcast climate","Phoenix is wetter than Seattle year-round","Scatter position is determined by temperature, not rainfall"],
+   ans:1, fb:"Upper-left = low x (low precipitation), high y (high sunshine) = Phoenix the desert sun city. Lower-right = high precipitation, low sunshine = Seattle's overcast marine climate. The scatter reveals the full wet–dry, sunny–cloudy spectrum at a glance."},
+
+  {id:"q10", dash:2, bloom:"Analyze", chart:"Avg Humidity Bar + Precip",
+   stem:"The average annual humidity bar chart shows Seattle and Miami as the <strong>most humid cities</strong> overall. The precipitation chart confirms both also receive high rainfall. What distinguishes their climate types despite similar humidity?",
+   opts:["They have identical climates — humidity and rain always go together","Miami's high humidity is driven by tropical heat and summer storm seasons; Seattle's by persistent overcast marine conditions — same metric, very different causes visible when cross-referencing the temperature heatmap","Humidity always correlates with cold temperatures","Seattle receives more annual rainfall than Miami"],
+   ans:1, fb:"Miami (avg ~78%) and Seattle (avg ~75%) are both highly humid, but the temperature heatmap shows Miami stays warm year-round while Seattle stays cool. Same humidity reading, completely different climate mechanisms — the bar chart alone cannot show this."},
+
+  {id:"q11", dash:3, bloom:"Remember", chart:"Bubble Scatter",
+   stem:"According to the GDP vs Life Expectancy bubble chart, which country has the <strong>highest life expectancy</strong>?",
+   opts:["Norway","Sweden","Japan","S. Korea"], ans:2,
+   fb:"Japan plots at 84.3 years — the highest point on the life expectancy axis."},
+
+  {id:"q12", dash:3, bloom:"Analyze", chart:"CO₂ Bar + Bubble",
+   stem:"Canada (14.9t) and the USA (14.2t) lead CO₂ per capita yet both appear at high life expectancy on the bubble chart. What pattern does this reveal?",
+   opts:["High CO₂ causes longer life expectancy","High GDP enables healthcare and longevity independent of CO₂ — yet some European nations achieve equal longevity at far lower emissions, suggesting alternative development paths","The CO₂ data for these countries is incorrect","Life expectancy and CO₂ are structurally unrelated"],
+   ans:1, fb:"Wealth buys healthcare, but Sweden and Norway reach equivalent longevity at 3–4t CO₂ per capita. The charts show high-income low-emission longevity is possible — but uncommon."},
+
+  {id:"q13", dash:3, bloom:"Analyze", chart:"Bubble + Internet Scatter",
+   stem:"India has low GDP ($2,400), low life expectancy (70.2), and only 44% internet access. Comparing both scatter charts, which conclusion is best supported?",
+   opts:["Internet access directly causes longer life","India's development challenges are multi-dimensional — low income and low connectivity appear together, making it impossible to isolate a single cause","India is an outlier and should be excluded","Internet access matters more than GDP for health outcomes"],
+   ans:1, fb:"When two indicators rank low for the same country and life expectancy is also low, it signals interlocking deficits rather than any single cause. The charts establish correlation, not causation."},
+
+  {id:"q14", dash:3, bloom:"Evaluate", chart:"Bubble Scatter",
+   stem:"A policy analyst says: <em>'Since China has higher life expectancy than India, China's development model is clearly superior.'</em> What critical limitation does this dashboard analysis miss?",
+   opts:["The bubble sizes are inaccurate","This is a single-year snapshot — it cannot establish 'model superiority'; trajectory, inequality, governance, and rural/urban splits are all absent","China's GDP is overstated in World Bank data","Life expectancy is not a valid development metric"],
+   ans:1, fb:"Cross-sectional snapshots cannot support causal or comparative model claims. Gini coefficients and governance quality are absent. Good critical readers flag what a dashboard cannot show."},
+
+  {id:"q15", dash:3, bloom:"Analyze", chart:"CO₂ / Bubble",
+   stem:"Africa has the lowest CO₂ emissions overall, yet within the bubble chart Africa spans a wide life expectancy range. What does this internal spread tell us?",
+   opts:["Africa should be excluded from global comparisons","The African continent has enormous internal heterogeneity — regional averages mask wide country-level variation, making 'Africa' an analytically problematic aggregate","Africa's data is less reliable than other regions","Population size explains the variation"],
+   ans:1, fb:"Within-region variance is as important as between-region differences. Ethiopia and Nigeria differ markedly from Egypt and South Africa. Regional aggregates obscure more than they reveal."},
+
+  {id:"q16", dash:4, bloom:"Remember", chart:"Revenue Line",
+   stem:"The monthly revenue line chart shows two lines — 2010 and 2011. In which month does the 2011 line reach its <strong>highest point</strong>?",
+   opts:["October","November","December","September"], ans:2,
+   fb:"December 2011 peaks at £1,187K — the highest point on either line, consistent with Christmas gift purchasing."},
+
+  {id:"q17", dash:4, bloom:"Analyze", chart:"Revenue Line",
+   stem:"Looking at the revenue line chart with both 2010 and 2011 lines, which pattern is most visible across both years?",
+   opts:["Lines are flat — revenue is evenly distributed year-round","Both lines dip sharply in summer then spike in winter","Both lines rise steeply from September, peaking in November–December — a clear Q4 holiday surge","The 2010 line is higher than 2011 throughout the year"],
+   ans:2, fb:"Both lines climb sharply from September onward, with December being the highest point each year. The 2011 line sits above 2010 for most months, and both show the same Q4 gift-retail pattern."},
+
+  {id:"q18", dash:4, bloom:"Analyze", chart:"Country Bar + Category Pie",
+   stem:"Netherlands is the top non-UK market and Home Decor (28%) is the largest product category. What insight emerges from combining these two charts?",
+   opts:["The company should close Netherlands operations","Netherlands' strong revenue combined with Home Decor dominance suggests European home-gifting markets align with the product range — expansion should target culturally similar markets","Netherlands buys mostly Stationery, not Home Decor","The pie chart contradicts the bar chart"],
+   ans:1, fb:"Geography + product mix together suggest a strategic insight. Dutch home design culture aligns with the product category dominance — this is actionable cross-chart intelligence."},
+
+  {id:"q19", dash:4, bloom:"Evaluate", chart:"Hourly + KPI",
+   stem:"The hourly transaction chart labels peaks as '10 AM' to '3 PM'. The KPI shows Return Rate '↑ 1.2 pts'. A manager argues: <em>'We should extend customer service hours to reduce returns.'</em> What is the critical flaw?",
+   opts:["Customer service hours are unrelated to returns","The chart shows when transactions occur but not why returns happen — the causal link between peak hours and return rate is absent","Return rate of 8.3% is below industry average so it's fine","The hourly chart is seasonally adjusted"],
+   ans:1, fb:"Transaction timing ≠ return causes. Returns could be driven by product quality, inaccurate descriptions, or damaged shipping — none visible here. Dashboards show patterns, not causes."},
+
+  {id:"q20", dash:4, bloom:"Analyze", chart:"Multiple Charts",
+   stem:"The revenue line chart shows both lines peaking sharply in December. The hourly chart shows the transaction curve peaking between <strong>10 AM and 3 PM</strong>. What operational recommendation do both jointly support?",
+   opts:["Reduce warehouse staff in January because both lines are lowest then","Scale up inventory and fulfilment from September onward, and staff customer operations for 10 AM–3 PM peak hours","Shift all marketing to evening hours to smooth the hourly curve","Focus exclusively on Netherlands market expansion"],
+   ans:1, fb:"December peak on the line chart + 10 AM–3 PM spike on the hourly chart = scale up before Q4 and staff for mid-day. Both charts together give a concrete, time-specific operational signal."},
+
+];
+
+const LT = ["A","B","C","D"];
+const TOTAL_Q = 24; // 20 MC + 4 short answer
+
+// Short-answer questions (one per dashboard, 4 dashboards)
+const SA = {
+  1: {id:"sa1", dash:1, stem:"The enrollment dashboard includes two scatter plots (net price vs grad rate, and retention vs student-faculty ratio). How would you use these together to advise a prospective student? Which combination of charts tells the most complete story, and what is still missing?"},
+  2: {id:"sa2", dash:2, stem:"The weather dashboard now includes a precipitation vs sunshine scatter and a humidity bar chart. Which of these new charts is most useful for someone choosing a city to relocate to, and why? Suggest one further improvement."},
+  3: {id:"sa3", dash:3, stem:"If you were advising a policymaker using this development dashboard, what is the single most important missing variable you would add, and why?"},
+  4: {id:"sa4", dash:4, stem:"As a business analyst, how would you redesign this e-commerce dashboard to make the return rate problem more prominent and actionable?"},
+};
+
+function renderQs(){
+  const c = document.getElementById("q-wrap");
+  // Build per-dash local numbering: MC Q1-Q5, SA Q6 within each dashboard tab
+  const dashQIdx = {1:0,2:0,3:0,4:0}; // local counter per dash
+  let html = QS.map((q)=>{
+    dashQIdx[q.dash]++;
+    const localN = dashQIdx[q.dash]; // 1–5
+    const saved = ST.ans[q.id];
+    return `<div class="q-item" id="qi-${q.id}" style="${q.dash!==1?"display:none":""}">
+      <div class="q-hdr">
+        <span class="q-num">Q${localN}</span>
+        <span class="q-meta">${q.bloom}</span>
+        <span class="q-ref">${q.chart}</span>
+      </div>
+      <div class="q-stem">${q.stem}</div>
+      <div class="q-opts">
+        ${q.opts.map((o,oi)=>`
+          <label class="q-opt${saved===oi?" on":""}">
+            <input type="radio" name="${q.id}" value="${oi}" onchange="pick('${q.id}',${oi},this.closest('.q-item'))">
+            <span class="q-lt">${LT[oi]}</span><span>${o}</span>
+          </label>`).join("")}
+      </div>
+    </div>`;
+  }).join("");
+
+  // SA is always Q6 within each dashboard tab
+  Object.values(SA).forEach(sa => {
+    const savedTxt = ST.saText[sa.id] || "";
+    html += `<div class="q-item q-sa" id="qi-${sa.id}" style="${sa.dash!==1?"display:none":""}">
+      <div class="q-hdr">
+        <span class="q-num">Q6</span>
+        <span class="q-meta">Short Answer</span>
+        <span class="q-ref">Dashboard Design</span>
+      </div>
+      <div class="q-stem">${sa.stem}</div>
+      <div class="q-sa-wrap">
+        <textarea
+          id="ta-${sa.id}"
+          placeholder="Write your response here — be specific, cite charts by name…"
+          onInput="typeSA('${sa.id}',this)"
+        >${savedTxt}</textarea>
+        <div class="sa-footer">
+          <span class="sa-hint">Minimum 30 characters to mark as answered</span>
+          <span class="sa-count" id="cc-${sa.id}">${savedTxt.length} chars</span>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  c.innerHTML = html;
+}
+
+function showQsForDash(n){
+  QS.forEach(q=>{
+    const el=document.getElementById("qi-"+q.id);
+    if(el) el.style.display=q.dash===n?"":"none";
+  });
+  Object.values(SA).forEach(sa=>{
+    const el=document.getElementById("qi-"+sa.id);
+    if(el) el.style.display=sa.dash===n?"":"none";
+  });
+  const titles={1:"Dashboard 1 · University Enrollment",2:"Dashboard 2 · US Weather",3:"Dashboard 3 · World Development",4:"Dashboard 4 · E-Commerce"};
+  document.getElementById("qp-title").textContent=titles[n];
+  document.getElementById("qp-sub").textContent="Questions Q1–Q6 · 5 multiple choice + 1 short answer";
+  document.querySelector(".q-panel").scrollTop=0;
+}
+
+function pick(qid,idx,item){
+  ST.ans[qid]=idx;
+  item.querySelectorAll(".q-opt").forEach((el,i)=>el.classList.toggle("on",i===idx));
+  updateProg();
+}
+
+function typeSA(sid, ta){
+  const val = ta.value;
+  ST.ans[sid] = val.trim().length >= 30 ? val : undefined;
+  const cc = document.getElementById("cc-"+sid);
+  if(cc) cc.textContent = val.length + " chars";
+  // store raw text always
+  ST.saText[sid] = val;
+  updateProg();
+}
+
+function updateProg(){
+  const mcDone = QS.filter(q=>ST.ans[q.id]!==undefined).length;
+  const saDone = Object.values(SA).filter(sa=>ST.ans[sa.id]!==undefined).length;
+  const total = QS.length + Object.keys(SA).length;
+  const n = mcDone + saDone;
+  document.getElementById("prog-fill").style.width=(n/total*100)+"%";
+  document.getElementById("prog-lbl").textContent=n+" / "+total;
+  document.getElementById("ans-n").textContent=n;
+  document.getElementById("btn-sub").disabled=n<total;
+}
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+function switchDash(n,btn){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  btn.classList.add("on");
+  document.querySelectorAll(".dash-content").forEach(d=>d.classList.remove("on"));
+  document.getElementById("dash-"+n).classList.add("on");
+  showQsForDash(n);
+  document.querySelector(".dash-panel").scrollTop=0;
+}
+function toggleCity(el){
+  const c=el.dataset.city;
+  if(aCities.has(c)&&aCities.size>1){aCities.delete(c);el.classList.remove("on");}
+  else if(!aCities.has(c)){aCities.add(c);el.classList.add("on");}
+  drawD2();
+}
+function toggleRegion(el){
+  const r=el.dataset.region;
+  if(aRegions.has(r)&&aRegions.size>1){aRegions.delete(r);el.classList.remove("on");}
+  else if(!aRegions.has(r)){aRegions.add(r);el.classList.add("on");}
+  drawD3();
+}
+
+// ══════════════════════════════════════════════════════
+// FLOW
+// ══════════════════════════════════════════════════════
+let ST={student:{name:"",email:""},ans:{},saText:{},survey:{},t0:null};
+
+function start(){
+  const name=document.getElementById("inp-name").value.trim();
+  const email=document.getElementById("inp-email").value.trim();
+  if(!name){alert("Please enter your full name.");return;}
+  if(!email||!email.includes("@")){alert("Please enter a valid email address.");return;}
+  ST.student={name,email};ST.t0=Date.now();
+  document.getElementById("tb-name").textContent=name;
+  document.getElementById("sv-name-bar").textContent=name;
+  // Go to survey screen first
+  document.getElementById("screen-landing").classList.remove("active");
+  document.getElementById("screen-survey").classList.add("active");
+  initSurvey();
+}
+
+function submit(){
+  const mcDone=QS.filter(q=>ST.ans[q.id]!==undefined).length;
+  const saDone=Object.values(SA).filter(sa=>ST.ans[sa.id]!==undefined).length;
+  const total=QS.length+Object.keys(SA).length;
+  const n=mcDone+saDone;
+  if(n<total){alert("Please answer all "+total+" questions. You have answered "+n+".");return;}
+  if(!confirm("Submit your assessment? Answers cannot be changed after submission."))return;
+  saveStorage();
+  document.getElementById("screen-assessment").classList.remove("active");
+  document.getElementById("screen-results").classList.add("active");
+  buildResults();
+}
+
+function restart(){
+  ST={student:{name:"",email:""},ans:{},saText:{},survey:{},t0:null};
+  aCities=new Set(["Miami","Seattle","Chicago","Phoenix","New York","Denver"]);
+  aRegions=new Set(["Europe","Americas","Asia","Africa"]);
+  document.getElementById("screen-results").classList.remove("active");
+  document.getElementById("screen-landing").classList.add("active");
+  document.getElementById("inp-name").value="";
+  document.getElementById("inp-email").value="";
+}
+
+// ══════════════════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════════════════
+function buildResults(){
+  const score=QS.filter(q=>ST.ans[q.id]===q.ans).length;
+  const total=QS.length;
+  const pct=Math.round(score/total*100);
+  document.getElementById("res-nb").textContent=ST.student.name;
+  document.getElementById("r-sc").textContent=score+"/"+total;
+  document.getElementById("r-pct").textContent=pct+"%";
+
+  let lv,lt,ld;
+  if(pct>=88){lv="Advanced";lt="Advanced Dashboard Reader";ld="You extract precise values, identify complex patterns, synthesise across multiple charts, and critically evaluate misleading narratives. You recognise what dashboards cannot show, not just what they do.";}
+  else if(pct>=72){lv="Proficient";lt="Proficient Dashboard Reader";ld="You read charts accurately and make cross-chart comparisons. Strengthen critical evaluation — practice questioning snapshot KPIs, truncated axes, and what the dashboard omits.";}
+  else if(pct>=48){lv="Developing";lt="Developing Dashboard Reader";ld="You extract basic values from individual charts. Focus on reading two charts simultaneously and asking: what does chart B add to chart A's story?";}
+  else{lv="Novice";lt="Foundational Dashboard Reader";ld="Focus on chart-reading fundamentals: match axis labels to values, follow line trends, compare bar heights. Build value-extraction skills before moving to synthesis.";}
+
+  document.getElementById("r-lv").textContent=lv;
+  document.getElementById("r-lt").textContent=lt;
+  document.getElementById("r-ld").textContent=ld;
+
+  const crossIds=new Set(["q3","q5","q8","q10","q13","q18"]);
+  const DC={"Value Extraction":{t:0,c:0},"Pattern Recognition":{t:0,c:0},"Cross-Chart Integration":{t:0,c:0}};
+  QS.forEach(q=>{
+    let d;
+    if(crossIds.has(q.id)) d="Cross-Chart Integration";
+    else if(q.bloom==="Remember") d="Value Extraction";
+    else d="Pattern Recognition";
+    DC[d].t++;
+    if(ST.ans[q.id]===q.ans) DC[d].c++;
+  });
+  document.getElementById("dim-r").innerHTML=Object.entries(DC).map(([name,v])=>{
+    const p=v.t?Math.round(v.c/v.t*100):0;
+    return `<div class="dim-r"><div class="dr-lbl">${name}</div><div class="dr-sc">${v.c} / ${v.t}</div><div class="dr-track"><div class="dr-fill" style="width:${p}%"></div></div><div class="dr-pct">${p}%</div></div>`;
+  }).join("");
+
+  const dn={1:"University Enrollment",2:"US Weather",3:"World Development",4:"E-Commerce"};
+  document.getElementById("dash-bars").innerHTML=[1,2,3,4].map(n=>{
+    const dqs=QS.filter(q=>q.dash===n);
+    const dc=dqs.filter(q=>ST.ans[q.id]===q.ans).length;
+    const dp=Math.round(dc/dqs.length*100);
+    return `<div class="dbar"><div class="dbar-meta"><span>D${n} · ${dn[n]}</span><span>${dc}/${dqs.length} · ${dp}%</span></div><div class="dbar-track"><div class="dbar-fill" style="width:${dp}%"></div></div></div>`;
+  }).join("");
+
+  // MC item review
+  let reviewHtml = QS.map((q,i)=>{
+    const ok=ST.ans[q.id]===q.ans;
+    const ya=ST.ans[q.id]!==undefined?LT[ST.ans[q.id]]+". "+q.opts[ST.ans[q.id]]:"Not answered";
+    const ca=LT[q.ans]+". "+q.opts[q.ans];
+    return `<div class="i-row ${ok?"ok":"no"}">
+      <div class="i-icon">${ok?"✓":"✗"}</div>
+      <div>
+        <div class="i-q">Q${i+1} · ${q.stem.replace(/<[^>]+>/g,"").substring(0,85)}…</div>
+        <div class="i-d" style="color:${ok?"var(--pos)":"var(--neg)"}">${ya}</div>
+        ${!ok?`<div class="i-d">Correct: ${ca}</div>`:""}
+        <div class="i-fb">${q.fb}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // SA responses
+  reviewHtml += `<div style="margin-top:.75rem;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:.32rem;margin-bottom:.75rem">Short Answer Responses</div>`;
+  Object.values(SA).forEach((sa,i)=>{
+    const txt = ST.saText[sa.id] || "—";
+    reviewHtml += `<div class="i-row ok" style="border-left-color:var(--accent)">
+      <div class="i-icon" style="color:var(--accent)">✎</div>
+      <div>
+        <div class="i-q">Q${21+i} (SA) · ${sa.stem.substring(0,80)}…</div>
+        <div class="i-fb" style="color:var(--text);font-style:italic">"${txt}"</div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById("i-list").innerHTML = reviewHtml;
+}
+
+// ── PASTE YOUR GOOGLE APPS SCRIPT URL HERE ───────────
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbxCQoozzQVIIcZ5BZ10Y5W9hY7iGtXEfjB-JB0cMvuDcQo54mVaO6Ts97dXCfNjWypg/exec";
+// ─────────────────────────────────────────────────────
+
+function saveStorage(){
+  let sc = 0;
+  const sv = ST.survey || {};
+  const payload = {
+    timestamp:         new Date().toISOString(),
+    name:              ST.student.name,
+    email:             ST.student.email,
+    score:             0,
+    total:             QS.length,
+    pct:               0,
+    duration_min:      Math.round((Date.now() - ST.t0) / 60000),
+    // Screening questions
+    sv_age:            sv.age               || "",
+    sv_gender:         sv.gender            || "",
+    sv_year:           sv.year_in_school    || "",
+    sv_major:          sv.major             || "",
+    sv_english:        sv.english_first     || "",
+    sv_courses:        sv.courses           || "",
+    sv_stat_confidence:sv.stat_confidence   || "",
+    sv_excel_years:    sv.excel_years       || "",
+    sv_viz_years:      sv.viz_years         || "",
+    sv_tools:          sv.tools             || "",
+    sv_dash_exposure:  sv.dashboard_exposure|| "",
+    sv_viz_confidence: sv.viz_confidence    || "",
+  };
+  QS.forEach(q => {
+    payload[q.id] = ST.ans[q.id] !== undefined ? String.fromCharCode(65 + ST.ans[q.id]) : "—";
+    if(ST.ans[q.id] === q.ans) sc++;
+  });
+  // Short answer responses
+  Object.values(SA).forEach(sa => {
+    payload[sa.id] = ST.saText[sa.id] || "";
+  });
+  payload.score = sc;
+  payload.pct   = Math.round(sc / QS.length * 100);
+
+  if(SHEET_URL && !SHEET_URL.includes("YOUR_APPS")){
+    fetch(SHEET_URL, {
+      method:  "POST",
+      mode:    "no-cors",
+      headers: {"Content-Type":"application/json"},
+      body:    JSON.stringify(payload)
+    }).catch(err => console.warn("Sheet error:", err));
+  }
+  try{
+    const s = JSON.parse(localStorage.getItem("dlat_r") || "[]");
+    s.push(payload);
+    localStorage.setItem("dlat_r", JSON.stringify(s));
+  }catch(e){ console.warn("localStorage error:", e); }
+}
+
+function exportJSON(){
+  const blob=new Blob([localStorage.getItem("dlat_r")||"[]"],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="dlat_results_"+new Date().toISOString().slice(0,10)+".json";
+  a.click();URL.revokeObjectURL(url);
+}
+
+// ── Copy protection
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("copy", e => {
+  e.clipboardData.setData("text/plain","© Vinayaka Gude, Ph.D. — Elon University. Unauthorised reproduction prohibited.");
+  e.preventDefault();
+});
+document.addEventListener("keydown", e => {
+  if(e.key==="Enter" && document.getElementById("screen-landing").classList.contains("active")) start();
+  if((e.ctrlKey && ["u","s","a","p"].includes(e.key.toLowerCase())) ||
+     (e.ctrlKey && e.shiftKey && ["i","j","c"].includes(e.key.toLowerCase())) ||
+     e.key==="F12") { e.preventDefault(); }
+});
+
+
+// ══════════════════════════════════════════════════════
+// SURVEY LOGIC
+// ══════════════════════════════════════════════════════
+
+// Survey state lives in ST.survey
+function getSurveyData(){
+  const sv = {};
+  const r = (name) => { const el = document.querySelector('input[name="'+name+'"]:checked'); return el ? el.value : ""; };
+  const checks = (name) => { const els = document.querySelectorAll('input[name="'+name+'"]:checked'); return Array.from(els).map(e=>e.value).join("; ") || ""; };
+
+  sv.age             = r("sv-age");
+  sv.gender          = r("sv-gender");
+  sv.year_in_school  = r("sv-year");
+  sv.major           = r("sv-major");
+  sv.english_first   = r("sv-english");
+  sv.courses         = checks("sv-courses");
+  sv.stat_confidence = ST.survey.statconf || "";
+  sv.excel_years     = r("sv-excel-yrs");
+  sv.viz_years       = r("sv-viz-yrs");
+  sv.tools           = checks("sv-tools");
+  sv.dashboard_exposure = r("sv-exposure");
+  sv.viz_confidence  = ST.survey.vizconf || "";
+
+  return sv;
+}
+
+function setSNS(key, val, btn){
+  ST.survey[key] = val;
+  // Highlight selected button
+  const container = document.getElementById(key+"-btns");
+  if(container){
+    container.querySelectorAll(".sv-sc-btn").forEach(b => b.classList.remove("on"));
+    btn.classList.add("on");
+  }
+  // Enable the next button (all questions are optional)
+  const nb = document.getElementById("sv-next-btn");
+  if(nb) nb.disabled = false;
+}
+
+function startAssessment(){
+  // Gather all survey data into ST.survey
+  Object.assign(ST.survey, getSurveyData());
+
+  // Show assessment screen
+  document.getElementById("sv-name-bar").textContent = "";
+  document.getElementById("screen-survey").classList.remove("active");
+  document.getElementById("screen-assessment").classList.add("active");
+  renderQs(); showQsForDash(1); updateProg();
+  setTimeout(drawAll, 80);
+}
+
+// Enable the continue button as soon as survey screen is visible
+// (all questions optional — button enabled immediately)
+function initSurvey(){
+  const nb = document.getElementById("sv-next-btn");
+  if(nb) nb.disabled = false;
+}
+
+// ── EVENT DELEGATION — no onclick attributes needed ──────
+document.addEventListener("click", function(e){
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const a = el.dataset.action;
+
+  if(a === "start")            { start(); }
+  else if(a === "startAssessment") { startAssessment(); }
+  else if(a === "submit")      { submit(); }
+  else if(a === "restart")     { restart(); }
+  else if(a === "exportJSON")  { exportJSON(); }
+  else if(a === "switchDash")  { switchDash(parseInt(el.dataset.n), el); }
+  else if(a === "toggleCity")  { toggleCity(el); }
+  else if(a === "toggleRegion"){ toggleRegion(el); }
+  else if(a === "setSNS")      { setSNS(el.dataset.key, parseInt(el.dataset.val), el); }
+});
+
+// typeSA still needs window for dynamic HTML
+window.typeSA = typeSA;
+window.pick   = pick;
+
+}
+if(document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
+})();
+</script>
+</body>
+</html>
