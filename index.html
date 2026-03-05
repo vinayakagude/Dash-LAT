@@ -492,7 +492,7 @@ body{
     <div class="land-author">
       <div class="la-name">Vinayaka Gude, Ph.D.</div>
       <div class="la-role">Assistant Professor, Business Analytics · Elon University</div>
-      <div class="la-contact">Questions? <a href="mailto:vgude@elon.edu">vgude@elon.edu</a></div>
+      <div class="la-contact">Questions? <a href="/cdn-cgi/l/email-protection#61170614050421040d0e0f4f040514"><span class="__cf_email__" data-cfemail="ddabbaa8b9b89db8b1b2b3f3b8b9a8">[email&#160;protected]</span></a></div>
       <div class="la-copy">© 2025 Vinayaka Gude. All rights reserved. Unauthorised reproduction or distribution is prohibited.</div>
     </div>
   </div>
@@ -866,7 +866,7 @@ body{
   </div></div><!-- /res-scroll -->
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function() {
 function init() {
 // ══════════════════════════════════════════════════════
@@ -1378,108 +1378,118 @@ function drawD4(){
 const QS = [
   {id:"q1", dash:1, bloom:"Remember", chart:"Pell Grant Bar",
    stem:"In the Pell Grant vs graduation rate chart, the y-axis lists institution names. Which institution has the <strong>longest Grad Rate bar</strong> — the highest 6-year graduation rate?",
-   opts:["Westfield","Crestview A&M","Lakewood St.","Greendale"], ans:1,
+   opts:["Crestview A&M","Greendale","Lakewood St.","Westfield"], ans:0,
    fb:"Crestview A&M's Grad Rate bar extends to 74% — the furthest right of all institutions on that metric."},
 
   {id:"q2", dash:1, bloom:"Analyze", chart:"Line Chart",
    stem:"The enrollment trend covers 2016–2024. Which institution shows the sharpest <strong>V-shaped disruption</strong> — a steep drop followed by a strong recovery?",
-   opts:["Westfield","Metro Tech","Greendale","Harborview"], ans:1,
+   opts:["Harborview","Lakewood St.","Metro Tech","Westfield"], ans:2,
    fb:"Metro Tech dropped from ~5,800 (2019) to ~4,200 (2020) then recovered to 6,800 by 2024 — the most dramatic non-linear pattern in the dataset."},
 
   {id:"q3", dash:1, bloom:"Analyze", chart:"Net Price Scatter + Pell Bar",
    stem:"Find Greendale's colour in the Pell Grant bar chart. Its Pell bar extends much further than its Grad Rate bar. Combined with its position on the net price vs graduation scatter, what best explains Greendale's low graduation rate (42%)?",
-   opts:["Greendale has too few faculty members","Greendale's Pell Grant share reaches 61% — the highest of any institution — indicating a large share of financially at-risk students who face barriers beyond tuition cost","Low net price directly suppresses graduation rates","Greendale is an outlier that should be excluded from analysis"],
-   ans:1, fb:"The Pell bar for Greendale extends to 61% — far beyond its 42% grad rate bar. Cross-referencing with the scatter confirms it sits at the low-price, low-outcome corner. High Pell share is the most analytically supported explanation."},
+   opts:["Greendale is a small institution, and smaller colleges have structurally lower graduation rates","Low net price directly compresses graduation rates by attracting less-motivated students","Greendale has too few faculty members relative to its student population","Greendale's Pell Grant share reaches 61% — the highest of any institution — indicating a large share of financially at-risk students who face barriers beyond tuition cost"],
+   ans:3, fb:"The Pell bar for Greendale extends to 61% — far beyond its 42% grad rate bar. Cross-referencing with the scatter confirms it sits at the low-price, low-outcome corner. High Pell share is the most analytically supported explanation."},
 
   {id:"q4", dash:1, bloom:"Analyze", chart:"Retention vs STF Scatter",
    stem:"The retention rate vs student-to-faculty ratio scatter shows Greendale has the <strong>highest student load per faculty member</strong>. What pattern does this suggest?",
-   opts:["High student-faculty ratios always improve retention through peer learning","Greendale's high student load (25:1) aligns with its low retention (68%) — suggesting resource strain may contribute to poor outcomes","Student-to-faculty ratio and retention are unrelated","Crestview A&M has the highest faculty load"],
-   ans:1, fb:"Crestview A&M has the lowest ratio (12:1) and highest retention (88%). Greendale has the highest ratio (25:1) and lowest retention (68%). The scatter reveals this inverse relationship directly."},
+   opts:["Greendale's high student load (25:1) aligns with its low retention (68%) — suggesting resource strain may contribute to poor outcomes","Higher faculty ratios improve outcomes by encouraging peer-to-peer mentorship","Crestview A&M's faculty resources are the weakest despite its small size","The chart shows no meaningful relationship between faculty load and retention rates"],
+   ans:0, fb:"Crestview A&M has the lowest ratio (12:1) and highest retention (88%). Greendale has the highest ratio (25:1) and lowest retention (68%). The scatter reveals this inverse relationship directly."},
 
   {id:"q5", dash:1, bloom:"Evaluate", chart:"All Charts",
    stem:"A student wants an institution balancing <strong>affordability and academic quality</strong>. Using the net price vs graduation rate scatter and the enrollment trend, which offers the best combination?",
-   opts:["Crestview A&M — high retention (88%) and grad rate (74%), despite being the most expensive","Lakewood St. — moderate net price ($15,600), strong enrollment growth, solid grad rate (55%)","Greendale — lowest price ($9,200) makes it most accessible","Metro Tech — best enrollment recovery shows institutional resilience"],
-   ans:1, fb:"Lakewood St. offers the best holistic value: moderate cost, strong enrollment growth trajectory, and a solid graduation rate. Cross-chart synthesis is the key skill here."},
+   opts:["Greendale — its low net price ($9,200) makes it accessible, and its Pell share signals strong community support","Harborview — steady enrollment and mid-range pricing suggest stable institutional health","Metro Tech — its sharp enrollment recovery shows it can adapt, which signals a dynamic campus environment","Lakewood St. — moderate net price ($15,600), strong enrollment growth, and solid grad rate (55%) together represent balanced value"],
+   ans:3, fb:"Lakewood St. offers the best holistic value: moderate cost, strong enrollment growth trajectory, and a solid graduation rate. Cross-chart synthesis is the key skill here."},
 
   {id:"q6", dash:2, bloom:"Remember", chart:"Precipitation Bar",
    stem:"According to the monthly precipitation chart, which city has the <strong>highest precipitation in September</strong>?",
-   opts:["Seattle","Chicago","Miami","New York"], ans:2,
+   opts:["Chicago","New York","Seattle","Miami"], ans:3,
    fb:"Miami reaches 9.8 inches in September — its peak month due to Atlantic hurricane season."},
 
   {id:"q7", dash:2, bloom:"Analyze", chart:"Temperature Line",
    stem:"Which city has the <strong>smallest annual temperature range</strong> — the smallest gap between its coldest and hottest month?",
-   opts:["Chicago","Denver","Miami","Phoenix"], ans:2,
+   opts:["Denver","Miami","Phoenix","Chicago"], ans:1,
    fb:"Miami ranges from 68°F (Jan) to 84°F (Jul/Aug) — just 16°F. Chicago spans 51°F. Miami's maritime position buffers seasonal extremes."},
 
   {id:"q8", dash:2, bloom:"Analyze", chart:"Heatmap + Precipitation",
    stem:"The heatmap shows Phoenix peaks at 106°F in July, yet the precipitation chart shows Phoenix precipitation also <strong>peaks in July–August</strong>. What meteorological phenomenon does this reveal?",
-   opts:["Phoenix has the most rainfall overall","A data recording error","Arizona's North American Monsoon — summer storm systems bringing intense rainfall to the desert Southwest despite extreme heat","Phoenix's UV index causes evaporation before rain reaches the ground"],
-   ans:2, fb:"Arizona's North American Monsoon (July–September) draws Gulf of Mexico moisture northward, producing brief but intense desert thunderstorms — a cross-chart insight invisible from either chart alone."},
+   opts:["Arizona's North American Monsoon — summer storm systems bringing intense rainfall to the desert Southwest despite extreme heat","Phoenix's high elevation funnels moisture into the valley floor during summer months","The precipitation peak is a data recording artefact from desert dust sensors","Desert heat causes rapid evaporation, creating localised cloud seeding in July"],
+   ans:0, fb:"Arizona's North American Monsoon (July–September) draws Gulf of Mexico moisture northward, producing brief but intense desert thunderstorms — a cross-chart insight invisible from either chart alone."},
 
   {id:"q9", dash:2, bloom:"Analyze", chart:"Precip vs Sunshine Scatter",
    stem:"In the avg precipitation vs avg sunshine scatter, Phoenix plots in the <strong>upper-left area</strong> while Seattle plots in the <strong>lower-right area</strong>. What do these positions reveal?",
-   opts:["Both cities have similar climates despite different latitudes","Phoenix has low average precipitation and high sunshine hours — an arid sunny climate; Seattle has high precipitation and low sunshine — a cool overcast climate","Phoenix is wetter than Seattle year-round","Scatter position is determined by temperature, not rainfall"],
-   ans:1, fb:"Upper-left = low x (low precipitation), high y (high sunshine) = Phoenix the desert sun city. Lower-right = high precipitation, low sunshine = Seattle's overcast marine climate. The scatter reveals the full wet–dry, sunny–cloudy spectrum at a glance."},
+   opts:["Both cities share similar continental climates despite their different latitudes","Scatter position encodes only temperature; precipitation and sunshine are not represented","Phoenix is wetter overall because its lower latitude generates more convective rainfall","Phoenix has low average precipitation and high sunshine hours — an arid sunny climate; Seattle has high precipitation and low sunshine — a cool overcast climate"],
+   ans:3, fb:"Upper-left = low x (low precipitation), high y (high sunshine) = Phoenix the desert sun city. Lower-right = high precipitation, low sunshine = Seattle's overcast marine climate. The scatter reveals the full wet–dry, sunny–cloudy spectrum at a glance."},
 
   {id:"q10", dash:2, bloom:"Analyze", chart:"Avg Humidity Bar + Precip",
    stem:"The average annual humidity bar chart shows Seattle and Miami as the <strong>most humid cities</strong> overall. The precipitation chart confirms both also receive high rainfall. What distinguishes their climate types despite similar humidity?",
-   opts:["They have identical climates — humidity and rain always go together","Miami's high humidity is driven by tropical heat and summer storm seasons; Seattle's by persistent overcast marine conditions — same metric, very different causes visible when cross-referencing the temperature heatmap","Humidity always correlates with cold temperatures","Seattle receives more annual rainfall than Miami"],
-   ans:1, fb:"Miami (avg ~78%) and Seattle (avg ~75%) are both highly humid, but the temperature heatmap shows Miami stays warm year-round while Seattle stays cool. Same humidity reading, completely different climate mechanisms — the bar chart alone cannot show this."},
+   opts:["Seattle's humidity is seasonal — concentrated in summer — while Miami's is spread evenly year-round","Humidity levels above 70% indicate identical climate classifications regardless of temperature","Miami's high humidity is driven by tropical heat and summer storm seasons; Seattle's by persistent overcast marine conditions — same metric, very different causes visible when cross-referencing the temperature heatmap","The precipitation chart actually shows Seattle receives far more rain than Miami annually"],
+   ans:2, fb:"Miami (avg ~78%) and Seattle (avg ~75%) are both highly humid, but the temperature heatmap shows Miami stays warm year-round while Seattle stays cool. Same humidity reading, completely different climate mechanisms — the bar chart alone cannot show this."},
 
   {id:"q11", dash:3, bloom:"Remember", chart:"Bubble Scatter",
    stem:"According to the GDP vs Life Expectancy bubble chart, which country has the <strong>highest life expectancy</strong>?",
-   opts:["Norway","Sweden","Japan","S. Korea"], ans:2,
+   opts:["Japan","S. Korea","Norway","Sweden"], ans:0,
    fb:"Japan plots at 84.3 years — the highest point on the life expectancy axis."},
 
   {id:"q12", dash:3, bloom:"Analyze", chart:"CO₂ Bar + Bubble",
    stem:"Canada (14.9t) and the USA (14.2t) lead CO₂ per capita yet both appear at high life expectancy on the bubble chart. What pattern does this reveal?",
-   opts:["High CO₂ causes longer life expectancy","High GDP enables healthcare and longevity independent of CO₂ — yet some European nations achieve equal longevity at far lower emissions, suggesting alternative development paths","The CO₂ data for these countries is incorrect","Life expectancy and CO₂ are structurally unrelated"],
-   ans:1, fb:"Wealth buys healthcare, but Sweden and Norway reach equivalent longevity at 3–4t CO₂ per capita. The charts show high-income low-emission longevity is possible — but uncommon."},
+   opts:["CO₂ emissions and life expectancy are inversely correlated across all countries in the dataset","High-emission countries invest in carbon capture, which also improves local health outcomes","The CO₂ data for North American countries uses a different measurement standard","High GDP enables healthcare and longevity independent of CO₂ — yet some European nations achieve equal longevity at far lower emissions, suggesting alternative development paths"],
+   ans:3, fb:"Wealth buys healthcare, but Sweden and Norway reach equivalent longevity at 3–4t CO₂ per capita. The charts show high-income low-emission longevity is possible — but uncommon."},
 
   {id:"q13", dash:3, bloom:"Analyze", chart:"Bubble + Internet Scatter",
    stem:"India has low GDP ($2,400), low life expectancy (70.2), and only 44% internet access. Comparing both scatter charts, which conclusion is best supported?",
-   opts:["Internet access directly causes longer life","India's development challenges are multi-dimensional — low income and low connectivity appear together, making it impossible to isolate a single cause","India is an outlier and should be excluded","Internet access matters more than GDP for health outcomes"],
+   opts:["Internet access directly causes longer life by enabling access to health information","India's development challenges are multi-dimensional — low income and low connectivity appear together, making it impossible to isolate a single cause","GDP is the sole determinant of life expectancy, and internet access is a byproduct","India's indicators will converge with high-income nations within one development cycle"],
    ans:1, fb:"When two indicators rank low for the same country and life expectancy is also low, it signals interlocking deficits rather than any single cause. The charts establish correlation, not causation."},
 
   {id:"q14", dash:3, bloom:"Evaluate", chart:"Bubble Scatter",
    stem:"A policy analyst says: <em>'Since China has higher life expectancy than India, China's development model is clearly superior.'</em> What critical limitation does this dashboard analysis miss?",
-   opts:["The bubble sizes are inaccurate","This is a single-year snapshot — it cannot establish 'model superiority'; trajectory, inequality, governance, and rural/urban splits are all absent","China's GDP is overstated in World Bank data","Life expectancy is not a valid development metric"],
-   ans:1, fb:"Cross-sectional snapshots cannot support causal or comparative model claims. Gini coefficients and governance quality are absent. Good critical readers flag what a dashboard cannot show."},
+   opts:["The GDP axis uses purchasing power parity, which systematically overstates China's position","China's population is larger, so its life expectancy is weighted by more data points","This is a single-year snapshot — it cannot establish 'model superiority'; trajectory, inequality, governance, and rural/urban splits are all absent","Life expectancy is influenced by genetics, making country comparisons analytically invalid"],
+   ans:2, fb:"Cross-sectional snapshots cannot support causal or comparative model claims. Gini coefficients and governance quality are absent. Good critical readers flag what a dashboard cannot show."},
 
   {id:"q15", dash:3, bloom:"Analyze", chart:"CO₂ / Bubble",
    stem:"Africa has the lowest CO₂ emissions overall, yet within the bubble chart Africa spans a wide life expectancy range. What does this internal spread tell us?",
-   opts:["Africa should be excluded from global comparisons","The African continent has enormous internal heterogeneity — regional averages mask wide country-level variation, making 'Africa' an analytically problematic aggregate","Africa's data is less reliable than other regions","Population size explains the variation"],
-   ans:1, fb:"Within-region variance is as important as between-region differences. Ethiopia and Nigeria differ markedly from Egypt and South Africa. Regional aggregates obscure more than they reveal."},
+   opts:["Sub-Saharan countries have unreliable reporting, which inflates the apparent spread","Low CO₂ emissions cause a wide variance in health outcomes across developing regions","Continental population sizes determine the spread visible in bubble chart clusters","The African continent has enormous internal heterogeneity — regional averages mask wide country-level variation, making 'Africa' an analytically problematic aggregate"],
+   ans:3, fb:"Within-region variance is as important as between-region differences. Ethiopia and Nigeria differ markedly from Egypt and South Africa. Regional aggregates obscure more than they reveal."},
 
   {id:"q16", dash:4, bloom:"Remember", chart:"Revenue Line",
    stem:"The monthly revenue line chart shows two lines — 2010 and 2011. In which month does the 2011 line reach its <strong>highest point</strong>?",
-   opts:["October","November","December","September"], ans:2,
+   opts:["December","September","November","October"], ans:0,
    fb:"December 2011 peaks at £1,187K — the highest point on either line, consistent with Christmas gift purchasing."},
 
   {id:"q17", dash:4, bloom:"Analyze", chart:"Revenue Line",
    stem:"Looking at the revenue line chart with both 2010 and 2011 lines, which pattern is most visible across both years?",
-   opts:["Lines are flat — revenue is evenly distributed year-round","Both lines dip sharply in summer then spike in winter","Both lines rise steeply from September, peaking in November–December — a clear Q4 holiday surge","The 2010 line is higher than 2011 throughout the year"],
+   opts:["Revenue peaks in spring (March–April) driven by post-winter consumer spending","The 2010 line stays consistently above 2011 throughout all twelve months","Both lines rise steeply from September, peaking in November–December — a clear Q4 holiday surge","Revenue is broadly flat year-round with only minor monthly fluctuations"],
    ans:2, fb:"Both lines climb sharply from September onward, with December being the highest point each year. The 2011 line sits above 2010 for most months, and both show the same Q4 gift-retail pattern."},
 
   {id:"q18", dash:4, bloom:"Analyze", chart:"Country Bar + Category Pie",
    stem:"Netherlands is the top non-UK market and Home Decor (28%) is the largest product category. What insight emerges from combining these two charts?",
-   opts:["The company should close Netherlands operations","Netherlands' strong revenue combined with Home Decor dominance suggests European home-gifting markets align with the product range — expansion should target culturally similar markets","Netherlands buys mostly Stationery, not Home Decor","The pie chart contradicts the bar chart"],
+   opts:["Home Decor's dominance is driven by UK demand, making Netherlands revenue largely unrelated to the category mix","Netherlands' strong revenue combined with Home Decor dominance suggests European home-gifting markets align with the product range — expansion should target culturally similar markets","The bar and pie charts measure different time periods and cannot be meaningfully combined","Netherlands' position as top market is explained by logistics advantages, not product preference"],
    ans:1, fb:"Geography + product mix together suggest a strategic insight. Dutch home design culture aligns with the product category dominance — this is actionable cross-chart intelligence."},
 
   {id:"q19", dash:4, bloom:"Evaluate", chart:"Hourly + KPI",
    stem:"The hourly transaction chart labels peaks as '10 AM' to '3 PM'. The KPI shows Return Rate '↑ 1.2 pts'. A manager argues: <em>'We should extend customer service hours to reduce returns.'</em> What is the critical flaw?",
-   opts:["Customer service hours are unrelated to returns","The chart shows when transactions occur but not why returns happen — the causal link between peak hours and return rate is absent","Return rate of 8.3% is below industry average so it's fine","The hourly chart is seasonally adjusted"],
-   ans:1, fb:"Transaction timing ≠ return causes. Returns could be driven by product quality, inaccurate descriptions, or damaged shipping — none visible here. Dashboards show patterns, not causes."},
+   opts:["A 1.2 point increase in return rate is within normal variance and does not warrant any operational response","Customer service staffing levels cannot be changed without board approval, making the recommendation impractical","The hourly chart only covers weekdays, so the return rate KPI includes weekend patterns not shown in the peak-hour data","The chart shows when transactions occur but not why returns happen — the causal link between peak hours and return rate is absent from the data"],
+   ans:3, fb:"Transaction timing ≠ return causes. Returns could be driven by product quality, inaccurate descriptions, or damaged shipping — none visible here. Dashboards show patterns, not causes."},
 
   {id:"q20", dash:4, bloom:"Analyze", chart:"Multiple Charts",
    stem:"The revenue line chart shows both lines peaking sharply in December. The hourly chart shows the transaction curve peaking between <strong>10 AM and 3 PM</strong>. What operational recommendation do both jointly support?",
-   opts:["Reduce warehouse staff in January because both lines are lowest then","Scale up inventory and fulfilment from September onward, and staff customer operations for 10 AM–3 PM peak hours","Shift all marketing to evening hours to smooth the hourly curve","Focus exclusively on Netherlands market expansion"],
-   ans:1, fb:"December peak on the line chart + 10 AM–3 PM spike on the hourly chart = scale up before Q4 and staff for mid-day. Both charts together give a concrete, time-specific operational signal."},
+   opts:["Scale up inventory and fulfilment from September onward, and staff customer operations for 10 AM–3 PM peak hours","Redirect marketing spend from Q4 to Q1 to smooth out the revenue curve and reduce fulfilment pressure","Focus all operational investment on the Netherlands market since it drives the Q4 revenue spike","Reduce warehouse headcount in January and February when both revenue lines reach their annual low"],
+   ans:0, fb:"December peak on the line chart + 10 AM–3 PM spike on the hourly chart = scale up before Q4 and staff for mid-day. Both charts together give a concrete, time-specific operational signal."},
 
 ];
 
 const LT = ["A","B","C","D"];
 const TOTAL_Q = 24; // 20 MC + 4 short answer
+
+// Shuffle options while tracking the correct answer's new position
+function shuffleOpts(opts, correctIdx) {
+  const idx = [0,1,2,3];
+  for (let i = 3; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [idx[i], idx[j]] = [idx[j], idx[i]];
+  }
+  return { opts: idx.map(i => opts[i]), ans: idx.indexOf(correctIdx) };
+}
 
 // Short-answer questions (one per dashboard, 4 dashboards)
 const SA = {
@@ -1493,10 +1503,16 @@ function renderQs(){
   const c = document.getElementById("q-wrap");
   // Build per-dash local numbering: MC Q1-Q5, SA Q6 within each dashboard tab
   const dashQIdx = {1:0,2:0,3:0,4:0}; // local counter per dash
+  // Shuffle options once per session, store in QSHUF
+  if (!window.QSHUF) window.QSHUF = {};
+  QS.forEach(q => {
+    if (!window.QSHUF[q.id]) window.QSHUF[q.id] = shuffleOpts(q.opts, q.ans);
+  });
   let html = QS.map((q)=>{
     dashQIdx[q.dash]++;
     const localN = dashQIdx[q.dash]; // 1–5
     const saved = ST.ans[q.id];
+    const sh = window.QSHUF[q.id];
     return `<div class="q-item" id="qi-${q.id}" style="${q.dash!==1?"display:none":""}">
       <div class="q-hdr">
         <span class="q-num">Q${localN}</span>
@@ -1505,13 +1521,14 @@ function renderQs(){
       </div>
       <div class="q-stem">${q.stem}</div>
       <div class="q-opts">
-        ${q.opts.map((o,oi)=>`
+        ${sh.opts.map((o,oi)=>`
           <label class="q-opt${saved===oi?" on":""}">
             <input type="radio" name="${q.id}" value="${oi}" onchange="pick('${q.id}',${oi},this.closest('.q-item'))">
             <span class="q-lt">${LT[oi]}</span><span>${o}</span>
           </label>`).join("")}
       </div>
     </div>`;
+  }).join("");
   }).join("");
 
   // SA is always Q6 within each dashboard tab
@@ -1653,7 +1670,7 @@ function restart(){
 // RESULTS
 // ══════════════════════════════════════════════════════
 function buildResults(){
-  const score=QS.filter(q=>ST.ans[q.id]===q.ans).length;
+  const score=QS.filter(q=>ST.ans[q.id]===(window.QSHUF&&window.QSHUF[q.id]?window.QSHUF[q.id].ans:q.ans)).length;
   const total=QS.length;
   const pct=Math.round(score/total*100);
   document.getElementById("res-nb").textContent=ST.student.name;
@@ -1678,7 +1695,7 @@ function buildResults(){
     else if(q.bloom==="Remember") d="Value Extraction";
     else d="Pattern Recognition";
     DC[d].t++;
-    if(ST.ans[q.id]===q.ans) DC[d].c++;
+    if(ST.ans[q.id]===(window.QSHUF&&window.QSHUF[q.id]?window.QSHUF[q.id].ans:q.ans)) DC[d].c++;
   });
   document.getElementById("dim-r").innerHTML=Object.entries(DC).map(([name,v])=>{
     const p=v.t?Math.round(v.c/v.t*100):0;
@@ -1688,16 +1705,16 @@ function buildResults(){
   const dn={1:"University Enrollment",2:"US Weather",3:"World Development",4:"E-Commerce"};
   document.getElementById("dash-bars").innerHTML=[1,2,3,4].map(n=>{
     const dqs=QS.filter(q=>q.dash===n);
-    const dc=dqs.filter(q=>ST.ans[q.id]===q.ans).length;
+    const dc=dqs.filter(q=>ST.ans[q.id]===(window.QSHUF&&window.QSHUF[q.id]?window.QSHUF[q.id].ans:q.ans)).length;
     const dp=Math.round(dc/dqs.length*100);
     return `<div class="dbar"><div class="dbar-meta"><span>D${n} · ${dn[n]}</span><span>${dc}/${dqs.length} · ${dp}%</span></div><div class="dbar-track"><div class="dbar-fill" style="width:${dp}%"></div></div></div>`;
   }).join("");
 
   // MC item review
   let reviewHtml = QS.map((q,i)=>{
-    const ok=ST.ans[q.id]===q.ans;
-    const ya=ST.ans[q.id]!==undefined?LT[ST.ans[q.id]]+". "+q.opts[ST.ans[q.id]]:"Not answered";
-    const ca=LT[q.ans]+". "+q.opts[q.ans];
+    const ok=ST.ans[q.id]===(window.QSHUF&&window.QSHUF[q.id]?window.QSHUF[q.id].ans:q.ans);
+    const _sh=window.QSHUF&&window.QSHUF[q.id]?window.QSHUF[q.id]:{opts:q.opts,ans:q.ans}; const ya=ST.ans[q.id]!==undefined?LT[ST.ans[q.id]]+". "+_sh.opts[ST.ans[q.id]]:"Not answered";
+    const ca=LT[_sh.ans]+". "+_sh.opts[_sh.ans];
     return `<div class="i-row ${ok?"ok":"no"}">
       <div class="i-icon">${ok?"✓":"✗"}</div>
       <div>
@@ -1726,7 +1743,7 @@ function buildResults(){
 }
 
 // ── PASTE YOUR GOOGLE APPS SCRIPT URL HERE ───────────
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbxCQoozzQVIIcZ5BZ10Y5W9hY7iGtXEfjB-JB0cMvuDcQo54mVaO6Ts97dXCfNjWypg/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwLyd1Rx_umfJxIV-Jiq_ud-tL7mbpOIbB9DsHyPOIwmmGukMvoNDazafv39MupEEF9cA/exec";
 // ─────────────────────────────────────────────────────
 
 function saveStorage(){
@@ -1755,12 +1772,13 @@ function saveStorage(){
     sv_viz_confidence: sv.viz_confidence    || "",
   };
   QS.forEach(q => {
-    payload[q.id] = ST.ans[q.id] !== undefined ? String.fromCharCode(65 + ST.ans[q.id]) : "—";
-    if(ST.ans[q.id] === q.ans) sc++;
+    payload[q.id] = ST.ans[q.id] !== undefined ? String.fromCharCode(65 + ST.ans[q.id]) : "—"; payload[q.id+"_key"] = String.fromCharCode(65 + (window.QSHUF&&window.QSHUF[q.id]?window.QSHUF[q.id].ans:q.ans));
+    if(ST.ans[q.id] === (window.QSHUF&&window.QSHUF[q.id]?window.QSHUF[q.id].ans:q.ans)) sc++;
   });
-  // Short answer responses
+  // Short answer responses — truncated to 10 chars for sheet readability
   Object.values(SA).forEach(sa => {
-    payload[sa.id] = ST.saText[sa.id] || "";
+    const full = ST.saText[sa.id] || "";
+    payload[sa.id] = full.length > 10 ? full.substring(0, 10) + "…" : full;
   });
   payload.score = sc;
   payload.pct   = Math.round(sc / QS.length * 100);
@@ -1877,17 +1895,4 @@ document.addEventListener("click", function(e){
   else if(a === "setSNS")      { setSNS(el.dataset.key, parseInt(el.dataset.val), el); }
 });
 
-// typeSA still needs window for dynamic HTML
-window.typeSA = typeSA;
-window.pick   = pick;
-
-}
-if(document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
-}
-})();
-</script>
-</body>
-</html>
+// typeSA
