@@ -492,7 +492,7 @@ body{
     <div class="land-author">
       <div class="la-name">Vinayaka Gude, Ph.D.</div>
       <div class="la-role">Assistant Professor, Business Analytics · Elon University</div>
-      <div class="la-contact">Questions? <a href="mailto:vgude@elon.edu">vgude@elon.edu</a></div>
+      <div class="la-contact">Questions? <a href="/cdn-cgi/l/email-protection#dea8b9abbabb9ebbb2b1b0f0bbbaab"><span class="__cf_email__" data-cfemail="abddccdecfceebcec7c4c585cecfde">[email&#160;protected]</span></a></div>
       <div class="la-copy">© 2025 Vinayaka Gude. All rights reserved. Unauthorised reproduction or distribution is prohibited.</div>
     </div>
   </div>
@@ -866,7 +866,7 @@ body{
   </div></div><!-- /res-scroll -->
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function() {
 function init() {
 // ══════════════════════════════════════════════════════
@@ -1489,13 +1489,42 @@ const SA = {
   4: {id:"sa4", dash:4, stem:"As a business analyst, how would you redesign this e-commerce dashboard to make the return rate problem more prominent and actionable?"},
 };
 
+
+// ── OPTION SHUFFLE ─────────────────────────────────────────────────
+function seededRand(seed){
+  let s = seed >>> 0 || 1;
+  return function(){
+    s ^= s << 13; s ^= s >> 17; s ^= s << 5;
+    return ((s >>> 0) / 4294967296);
+  };
+}
+function shuffleOpts(q, rng){
+  const idx = q.opts.map((_,i)=>i);
+  for(let i = idx.length-1; i > 0; i--){
+    const j = Math.floor(rng() * (i+1));
+    [idx[i], idx[j]] = [idx[j], idx[i]];
+  }
+  const newOpts = idx.map(old => q.opts[old]);
+  const newAns  = idx.indexOf(q.ans);
+  return { opts: newOpts, ans: newAns };
+}
+function initShuffle(){
+  if(ST.shuffle) return;
+  const seed = (ST.student.name + ST.student.email).split("").reduce((a,c)=>a*31+c.charCodeAt(0)|0, 5381);
+  const rng = seededRand(seed);
+  ST.shuffle = {};
+  QS.forEach(q => { ST.shuffle[q.id] = shuffleOpts(q, rng); });
+}
+// ───────────────────────────────────────────────────────────────────
 function renderQs(){
+  initShuffle();
   const c = document.getElementById("q-wrap");
   // Build per-dash local numbering: MC Q1-Q5, SA Q6 within each dashboard tab
   const dashQIdx = {1:0,2:0,3:0,4:0}; // local counter per dash
   let html = QS.map((q)=>{
     dashQIdx[q.dash]++;
     const localN = dashQIdx[q.dash]; // 1–5
+    const sh = ST.shuffle[q.id];
     const saved = ST.ans[q.id];
     return `<div class="q-item" id="qi-${q.id}" style="${q.dash!==1?"display:none":""}">
       <div class="q-hdr">
@@ -1505,7 +1534,7 @@ function renderQs(){
       </div>
       <div class="q-stem">${q.stem}</div>
       <div class="q-opts">
-        ${q.opts.map((o,oi)=>`
+        ${sh.opts.map((o,oi)=>`
           <label class="q-opt${saved===oi?" on":""}">
             <input type="radio" name="${q.id}" value="${oi}" onchange="pick('${q.id}',${oi},this.closest('.q-item'))">
             <span class="q-lt">${LT[oi]}</span><span>${o}</span>
@@ -1640,7 +1669,7 @@ function submit(){
 }
 
 function restart(){
-  ST={student:{name:"",email:""},ans:{},saText:{},survey:{},t0:null};
+  ST={student:{name:"",email:""},ans:{},saText:{},survey:{},shuffle:null,t0:null};
   aCities=new Set(["Miami","Seattle","Chicago","Phoenix","New York","Denver"]);
   aRegions=new Set(["Europe","Americas","Asia","Africa"]);
   document.getElementById("screen-results").classList.remove("active");
@@ -1653,7 +1682,8 @@ function restart(){
 // RESULTS
 // ══════════════════════════════════════════════════════
 function buildResults(){
-  const score=QS.filter(q=>ST.ans[q.id]===q.ans).length;
+  const correctFor = q => { const sh=ST.shuffle?ST.shuffle[q.id]:null; return sh?sh.ans:q.ans; };
+  const score=QS.filter(q=>ST.ans[q.id]===correctFor(q)).length;
   const total=QS.length;
   const pct=Math.round(score/total*100);
   document.getElementById("res-nb").textContent=ST.student.name;
@@ -1678,7 +1708,7 @@ function buildResults(){
     else if(q.bloom==="Remember") d="Value Extraction";
     else d="Pattern Recognition";
     DC[d].t++;
-    if(ST.ans[q.id]===q.ans) DC[d].c++;
+    if(ST.ans[q.id]===correctFor(q)) DC[d].c++;
   });
   document.getElementById("dim-r").innerHTML=Object.entries(DC).map(([name,v])=>{
     const p=v.t?Math.round(v.c/v.t*100):0;
@@ -1688,16 +1718,18 @@ function buildResults(){
   const dn={1:"University Enrollment",2:"US Weather",3:"World Development",4:"E-Commerce"};
   document.getElementById("dash-bars").innerHTML=[1,2,3,4].map(n=>{
     const dqs=QS.filter(q=>q.dash===n);
-    const dc=dqs.filter(q=>ST.ans[q.id]===q.ans).length;
+    const dc=dqs.filter(q=>ST.ans[q.id]===correctFor(q)).length;
     const dp=Math.round(dc/dqs.length*100);
     return `<div class="dbar"><div class="dbar-meta"><span>D${n} · ${dn[n]}</span><span>${dc}/${dqs.length} · ${dp}%</span></div><div class="dbar-track"><div class="dbar-fill" style="width:${dp}%"></div></div></div>`;
   }).join("");
 
   // MC item review
   let reviewHtml = QS.map((q,i)=>{
-    const ok=ST.ans[q.id]===q.ans;
-    const ya=ST.ans[q.id]!==undefined?LT[ST.ans[q.id]]+". "+q.opts[ST.ans[q.id]]:"Not answered";
-    const ca=LT[q.ans]+". "+q.opts[q.ans];
+    const sh=ST.shuffle?ST.shuffle[q.id]:null;
+    const displayOpts=sh?sh.opts:q.opts;
+    const ok=ST.ans[q.id]===correctFor(q);
+    const ya=ST.ans[q.id]!==undefined?LT[ST.ans[q.id]]+". "+displayOpts[ST.ans[q.id]]:"Not answered";
+    const ca=LT[correctFor(q)]+". "+displayOpts[correctFor(q)];
     return `<div class="i-row ${ok?"ok":"no"}">
       <div class="i-icon">${ok?"✓":"✗"}</div>
       <div>
@@ -1755,8 +1787,10 @@ function saveStorage(){
     sv_viz_confidence: sv.viz_confidence    || "",
   };
   QS.forEach(q => {
+    const shAns = ST.shuffle ? ST.shuffle[q.id].ans : q.ans;
     payload[q.id] = ST.ans[q.id] !== undefined ? String.fromCharCode(65 + ST.ans[q.id]) : "—";
-    if(ST.ans[q.id] === q.ans) sc++;
+    payload[q.id + "_key"] = String.fromCharCode(65 + shAns);
+    if(ST.ans[q.id] === shAns) sc++;
   });
   // Short answer responses
   Object.values(SA).forEach(sa => {
